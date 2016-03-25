@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Disk Organizer")]
+[assembly: AssemblyTitle("FolderSelectDialog")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Disk Organizer")]
+[assembly: AssemblyProduct("FolderSelectDialog")]
 [assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9f26e69b-a010-49a4-96b1-06ae05db21b8")]
+[assembly: Guid("ee04cd77-af53-44b5-8492-e375450c64ce")]
 
 // Version information for an assembly consists of the following four values:
 //
