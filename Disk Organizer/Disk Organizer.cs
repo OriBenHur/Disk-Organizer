@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace Disk_Organizer
 {
-    public partial class Form1 : Form
+    public partial class Disk_Organizer : Form
     {
-        public Form1()
+        public Disk_Organizer()
         {
             InitializeComponent();
         }

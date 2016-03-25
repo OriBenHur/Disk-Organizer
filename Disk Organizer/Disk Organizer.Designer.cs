@@ -1,6 +1,6 @@
 ﻿namespace Disk_Organizer
 {
-    partial class Form1
+    partial class Disk_Organizer
     {
         /// <summary>
         /// Required designer variable.
@@ -30,10 +30,9 @@
         {
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Form1";
+            this.Text = "Disk_Organizer";
         }
 
         #endregion
     }
 }
-
