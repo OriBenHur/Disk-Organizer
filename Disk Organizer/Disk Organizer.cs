@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using FolderSelect;
+using System.IO;
 
 namespace Disk_Organizer
 {
@@ -13,6 +15,104 @@ namespace Disk_Organizer
         public Disk_Organizer()
         {
             InitializeComponent();
+        }
+
+        private void Browes_Folder_Click(object sender, EventArgs e)
+        {
+            
+            FolderSelectDialog fs = new FolderSelectDialog();
+            bool result = fs.ShowDialog();
+            if (result)
+            {
+                //listView1.Clear();
+                Folder_Path.Text = fs.FileName;
+                qury();
+            }
+            else
+            {
+                return;
+            }
+            
+
+
+        }
+        private void add(string path, string name)
+        {
+            string[] row = { path, name };
+            ListViewItem item = new ListViewItem(row);
+            listView1.Items.Add(item);
+        }
+
+        private void Disk_Organizer_Load(object sender, EventArgs e)
+        {
+            //Filter.Text = "*";
+            listView1.View = View.Details;
+            listView1.FullRowSelect = true;
+            listView1.Columns.Add("Name", 250);
+            listView1.Columns.Add("Path", 300);
+        }
+
+        private void Delete_btn_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem Item in listView1.Items)
+            {
+                if(Item.Checked)
+                {
+                    try
+                    {
+                       
+                        File.Delete(Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
+                        qury();
+                    }
+                    catch
+                    {
+                        MessageBox.Show("opsss");
+                    }
+
+                }
+            }
+
+
+
+        }
+
+        private void qury()
+        {
+            listView1.Clear();
+            listView1.View = View.Details;
+            listView1.FullRowSelect = true;
+            listView1.Columns.Add("Name", 250);
+            listView1.Columns.Add("Path", 300);
+            if (Directory.Exists(Folder_Path.Text))
+            {
+                string[] allfiles = Directory.GetFiles(Folder_Path.Text, "*.*", SearchOption.AllDirectories);
+                string filter = Filter.Text;
+                List<string> videos = new List<string>();
+
+                foreach (string name in allfiles)
+                {
+                    string ext = Path.GetExtension(name).ToLower();
+                    string FileName = Path.GetFileName(name);
+                    if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                        if (name.Contains(filter))
+                        {
+                            videos.Add(name);
+                        }
+                }
+
+                foreach (string film in videos) add(Path.GetFileName(film), Path.GetDirectoryName(film));
+            }
+            else MessageBox.Show("No such Folder");
+
+        }
+        private void Filter_TextChanged(object sender, EventArgs e)
+        {
+            qury();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            qury();
         }
     }
 }
