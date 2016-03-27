@@ -26,7 +26,6 @@ namespace Disk_Organizer
             {
                 //listView1.Clear();
                 Folder_Path.Text = fs.FileName;
-                qury();
             }
             else
             {
@@ -50,6 +49,7 @@ namespace Disk_Organizer
             listView1.FullRowSelect = true;
             listView1.Columns.Add("Name", 250);
             listView1.Columns.Add("Path", 300);
+            Filter_toolTip.SetToolTip(Filter, "For Multi Filter seperate the strings with white spase");
         }
 
         private void Delete_btn_Click(object sender, EventArgs e)
@@ -60,7 +60,6 @@ namespace Disk_Organizer
                 {
                     try
                     {
-                       
                         File.Delete(Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
                         qury();
                     }
@@ -68,7 +67,6 @@ namespace Disk_Organizer
                     {
                         MessageBox.Show("opsss");
                     }
-
                 }
             }
 
@@ -78,29 +76,32 @@ namespace Disk_Organizer
 
         private void qury()
         {
-            listView1.Clear();
-            listView1.View = View.Details;
-            listView1.FullRowSelect = true;
-            listView1.Columns.Add("Name", 250);
-            listView1.Columns.Add("Path", 300);
+            listView1.Items.Clear();
             if (Directory.Exists(Folder_Path.Text))
             {
                 string[] allfiles = Directory.GetFiles(Folder_Path.Text, "*.*", SearchOption.AllDirectories);
-                string filter = Filter.Text;
+                string[] searchstrings = Filter.Text.Split(' ');
+                //string filter = Filter.Text;
                 List<string> videos = new List<string>();
+                List<string> Filtered = new List<string>();
 
                 foreach (string name in allfiles)
                 {
                     string ext = Path.GetExtension(name).ToLower();
                     string FileName = Path.GetFileName(name);
-                    if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
-                        if (name.Contains(filter))
+                    foreach (string arg in searchstrings)
+                    {
+                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
                         {
-                            videos.Add(name);
+                            if (name.ToLower().Contains(arg.ToLower()))
+                            {
+                                if (!Filtered.Contains(name)) Filtered.Add(name);
+                            }
                         }
+                    }
                 }
 
-                foreach (string film in videos) add(Path.GetFileName(film), Path.GetDirectoryName(film));
+                foreach (string film in Filtered) add(Path.GetFileName(film), Path.GetDirectoryName(film));
             }
             else MessageBox.Show("No such Folder");
 
@@ -110,7 +111,7 @@ namespace Disk_Organizer
             qury();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
             qury();
         }

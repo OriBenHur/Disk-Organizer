@@ -28,17 +28,21 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.Browes_Folder = new System.Windows.Forms.Button();
             this.Folder_Path = new System.Windows.Forms.TextBox();
             this.listView1 = new System.Windows.Forms.ListView();
             this.Delete_btn = new System.Windows.Forms.Button();
             this.Filter = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.Set_refrash_btn = new System.Windows.Forms.Button();
+            this.Folder_label = new System.Windows.Forms.Label();
+            this.Filter_label = new System.Windows.Forms.Label();
+            this.Filter_toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // Browes_Folder
             // 
-            this.Browes_Folder.Location = new System.Drawing.Point(208, 25);
+            this.Browes_Folder.Location = new System.Drawing.Point(277, 25);
             this.Browes_Folder.Name = "Browes_Folder";
             this.Browes_Folder.Size = new System.Drawing.Size(28, 23);
             this.Browes_Folder.TabIndex = 0;
@@ -48,7 +52,7 @@
             // 
             // Folder_Path
             // 
-            this.Folder_Path.Location = new System.Drawing.Point(13, 27);
+            this.Folder_Path.Location = new System.Drawing.Point(82, 27);
             this.Folder_Path.Name = "Folder_Path";
             this.Folder_Path.Size = new System.Drawing.Size(189, 20);
             this.Folder_Path.TabIndex = 1;
@@ -74,28 +78,48 @@
             // 
             // Filter
             // 
-            this.Filter.Location = new System.Drawing.Point(13, 63);
+            this.Filter.Location = new System.Drawing.Point(82, 63);
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
             this.Filter.TextChanged += new System.EventHandler(this.Filter_TextChanged);
             // 
-            // button2
+            // Set_refrash_btn
             // 
-            this.button2.Location = new System.Drawing.Point(242, 24);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "Set Folder";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.Set_refrash_btn.Location = new System.Drawing.Point(311, 24);
+            this.Set_refrash_btn.Name = "Set_refrash_btn";
+            this.Set_refrash_btn.Size = new System.Drawing.Size(75, 23);
+            this.Set_refrash_btn.TabIndex = 5;
+            this.Set_refrash_btn.Text = "Set Folder";
+            this.Set_refrash_btn.UseVisualStyleBackColor = true;
+            this.Set_refrash_btn.Click += new System.EventHandler(this.Set_refrash_btn_Click);
+            // 
+            // Folder_label
+            // 
+            this.Folder_label.AutoSize = true;
+            this.Folder_label.Location = new System.Drawing.Point(37, 34);
+            this.Folder_label.Name = "Folder_label";
+            this.Folder_label.Size = new System.Drawing.Size(39, 13);
+            this.Folder_label.TabIndex = 6;
+            this.Folder_label.Text = "Folder:";
+            // 
+            // Filter_label
+            // 
+            this.Filter_label.AutoSize = true;
+            this.Filter_label.Location = new System.Drawing.Point(37, 69);
+            this.Filter_label.Name = "Filter_label";
+            this.Filter_label.Size = new System.Drawing.Size(32, 13);
+            this.Filter_label.TabIndex = 7;
+            this.Filter_label.Text = "Filter:";
             // 
             // Disk_Organizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 419);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.Filter_label);
+            this.Controls.Add(this.Folder_label);
+            this.Controls.Add(this.Set_refrash_btn);
             this.Controls.Add(this.Filter);
             this.Controls.Add(this.Delete_btn);
             this.Controls.Add(this.listView1);
@@ -116,7 +140,9 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.Button Delete_btn;
         private System.Windows.Forms.TextBox Filter;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button Set_refrash_btn;
+        private System.Windows.Forms.Label Folder_label;
+        private System.Windows.Forms.Label Filter_label;
+        private System.Windows.Forms.ToolTip Filter_toolTip;
     }
 }
