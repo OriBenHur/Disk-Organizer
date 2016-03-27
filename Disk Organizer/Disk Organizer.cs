@@ -19,8 +19,9 @@ namespace Disk_Organizer
 
         private void Browes_Folder_Click(object sender, EventArgs e)
         {
-            
+
             FolderSelectDialog fs = new FolderSelectDialog();
+            Folder_Err.Clear();
             bool result = fs.ShowDialog();
             if (result)
             {
@@ -31,10 +32,8 @@ namespace Disk_Organizer
             {
                 return;
             }
-            
-
-
         }
+
         private void add(string path, string name)
         {
             string[] row = { path, name };
@@ -56,12 +55,12 @@ namespace Disk_Organizer
         {
             foreach (ListViewItem Item in listView1.Items)
             {
-                if(Item.Checked)
+                if (Item.Checked)
                 {
                     try
                     {
                         File.Delete(Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
-                        qury();
+                        query();
                     }
                     catch
                     {
@@ -69,19 +68,16 @@ namespace Disk_Organizer
                     }
                 }
             }
-
-
-
         }
 
-        private void qury()
+        private void query()
         {
+            Folder_Err.Clear();
             listView1.Items.Clear();
             if (Directory.Exists(Folder_Path.Text))
             {
                 string[] allfiles = Directory.GetFiles(Folder_Path.Text, "*.*", SearchOption.AllDirectories);
                 string[] searchstrings = Filter.Text.Split(' ');
-                //string filter = Filter.Text;
                 List<string> videos = new List<string>();
                 List<string> Filtered = new List<string>();
 
@@ -93,7 +89,7 @@ namespace Disk_Organizer
                     {
                         if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
                         {
-                            if (name.ToLower().Contains(arg.ToLower()))
+                            if (Path.GetFileName(name.ToLower()).Contains(arg.ToLower()))
                             {
                                 if (!Filtered.Contains(name)) Filtered.Add(name);
                             }
@@ -108,12 +104,25 @@ namespace Disk_Organizer
         }
         private void Filter_TextChanged(object sender, EventArgs e)
         {
-            qury();
+            Folder_Err.Clear();
+            if (Folder_Path.Text == "")
+                Folder_Err.SetError(Filter, "You must selcet folder first");
+            else query();
         }
 
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
-            qury();
+            query();
+        }
+
+        private void Folder_Path_TextChanged(object sender, EventArgs e)
+        {
+            Folder_Err.Clear();
+        }
+
+        private void Folder_Path_Click(object sender, EventArgs e)
+        {
+            Folder_Err.Clear();
         }
     }
 }

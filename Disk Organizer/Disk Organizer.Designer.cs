@@ -38,11 +38,13 @@
             this.Folder_label = new System.Windows.Forms.Label();
             this.Filter_label = new System.Windows.Forms.Label();
             this.Filter_toolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.Folder_Err = new System.Windows.Forms.ErrorProvider(this.components);
+            ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).BeginInit();
             this.SuspendLayout();
             // 
             // Browes_Folder
             // 
-            this.Browes_Folder.Location = new System.Drawing.Point(277, 25);
+            this.Browes_Folder.Location = new System.Drawing.Point(272, 25);
             this.Browes_Folder.Name = "Browes_Folder";
             this.Browes_Folder.Size = new System.Drawing.Size(28, 23);
             this.Browes_Folder.TabIndex = 0;
@@ -52,10 +54,12 @@
             // 
             // Folder_Path
             // 
-            this.Folder_Path.Location = new System.Drawing.Point(82, 27);
+            this.Folder_Path.Location = new System.Drawing.Point(82, 26);
             this.Folder_Path.Name = "Folder_Path";
             this.Folder_Path.Size = new System.Drawing.Size(189, 20);
             this.Folder_Path.TabIndex = 1;
+            this.Folder_Path.Click += new System.EventHandler(this.Folder_Path_Click);
+            this.Folder_Path.TextChanged += new System.EventHandler(this.Folder_Path_TextChanged);
             // 
             // listView1
             // 
@@ -86,11 +90,11 @@
             // 
             // Set_refrash_btn
             // 
-            this.Set_refrash_btn.Location = new System.Drawing.Point(311, 24);
+            this.Set_refrash_btn.Location = new System.Drawing.Point(301, 25);
             this.Set_refrash_btn.Name = "Set_refrash_btn";
-            this.Set_refrash_btn.Size = new System.Drawing.Size(75, 23);
+            this.Set_refrash_btn.Size = new System.Drawing.Size(117, 23);
             this.Set_refrash_btn.TabIndex = 5;
-            this.Set_refrash_btn.Text = "Set Folder";
+            this.Set_refrash_btn.Text = "Set\\Refresh Folder";
             this.Set_refrash_btn.UseVisualStyleBackColor = true;
             this.Set_refrash_btn.Click += new System.EventHandler(this.Set_refrash_btn_Click);
             // 
@@ -112,6 +116,10 @@
             this.Filter_label.TabIndex = 7;
             this.Filter_label.Text = "Filter:";
             // 
+            // Folder_Err
+            // 
+            this.Folder_Err.ContainerControl = this;
+            // 
             // Disk_Organizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -128,6 +136,7 @@
             this.Name = "Disk_Organizer";
             this.Text = "Disk_Organizer";
             this.Load += new System.EventHandler(this.Disk_Organizer_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -144,5 +153,6 @@
         private System.Windows.Forms.Label Folder_label;
         private System.Windows.Forms.Label Filter_label;
         private System.Windows.Forms.ToolTip Filter_toolTip;
+        private System.Windows.Forms.ErrorProvider Folder_Err;
     }
 }
