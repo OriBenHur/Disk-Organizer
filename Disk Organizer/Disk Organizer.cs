@@ -65,7 +65,7 @@ namespace Disk_Organizer
                     }
                     catch
                     {
-                        MessageBox.Show("opsss");
+                        MessageBox.Show("Failed to delete " + Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
                     }
                 }
             }

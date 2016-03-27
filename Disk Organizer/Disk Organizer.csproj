@@ -46,8 +46,10 @@
     <Compile Include="Disk Organizer.Designer.cs">
       <DependentUpon>Disk Organizer.cs</DependentUpon>
     </Compile>
+    <Compile Include="FolderSelectDialog.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflector.cs" />
     <EmbeddedResource Include="Disk Organizer.resx">
       <DependentUpon>Disk Organizer.cs</DependentUpon>
     </EmbeddedResource>
@@ -69,12 +71,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\FolderSelectDialog\FolderSelectDialog.csproj">
-      <Project>{ee04cd77-af53-44b5-8492-e375450c64ce}</Project>
-      <Name>FolderSelectDialog</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
