@@ -39,6 +39,7 @@
             this.Filter_label = new System.Windows.Forms.Label();
             this.Filter_toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.Folder_Err = new System.Windows.Forms.ErrorProvider(this.components);
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).BeginInit();
             this.SuspendLayout();
             // 
@@ -63,15 +64,22 @@
             // 
             // listView1
             // 
+            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.listView1.AutoArrange = false;
             this.listView1.CheckBoxes = true;
             this.listView1.Location = new System.Drawing.Point(12, 98);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(774, 280);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.List;
+            this.listView1.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listView1_ColumnWidthChanging);
             // 
             // Delete_btn
             // 
+            this.Delete_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.Delete_btn.Location = new System.Drawing.Point(683, 384);
             this.Delete_btn.Name = "Delete_btn";
             this.Delete_btn.Size = new System.Drawing.Size(103, 23);
@@ -120,11 +128,22 @@
             // 
             this.Folder_Err.ContainerControl = this;
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(18, 107);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(15, 14);
+            this.checkBox1.TabIndex = 8;
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
             // Disk_Organizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 419);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.Filter_label);
             this.Controls.Add(this.Folder_label);
             this.Controls.Add(this.Set_refrash_btn);
@@ -154,5 +173,6 @@
         private System.Windows.Forms.Label Filter_label;
         private System.Windows.Forms.ToolTip Filter_toolTip;
         private System.Windows.Forms.ErrorProvider Folder_Err;
+        private System.Windows.Forms.CheckBox checkBox1;
     }
 }

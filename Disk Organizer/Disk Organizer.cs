@@ -34,9 +34,10 @@ namespace Disk_Organizer
             }
         }
 
-        private void add(string path, string name)
+        private void add(string box, string path, string name ,string size)
         {
-            string[] row = { path, name };
+           
+            string[] row = { box, path, name,size};
             ListViewItem item = new ListViewItem(row);
             listView1.Items.Add(item);
         }
@@ -44,10 +45,19 @@ namespace Disk_Organizer
         private void Disk_Organizer_Load(object sender, EventArgs e)
         {
             //Filter.Text = "*";
+            //CheckBox box = new CheckBox();
             listView1.View = View.Details;
             listView1.FullRowSelect = true;
-            listView1.Columns.Add("Name", 250);
-            listView1.Columns.Add("Path", 300);
+            listView1.Columns.Add("", 24);
+            listView1.Columns.Add("Name");
+            listView1.Columns.Add("Path");
+            listView1.Columns.Add("File Size");
+            //listView1.HeaderStyle =  ;
+            listView1.CheckBoxes = true;
+            //listView1.OwnerDraw = true;
+
+            //listView1.Columns.Insert(0, box);
+
             Filter_toolTip.SetToolTip(Filter, "For Multi Filter seperate the strings with white spase");
         }
 
@@ -59,15 +69,16 @@ namespace Disk_Organizer
                 {
                     try
                     {
-                        File.Delete(Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
-                        query();
+                        File.Delete(Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text); 
                     }
                     catch
                     {
-                        MessageBox.Show("Failed to delete " + Item.SubItems[1].Text + "\\" + Item.SubItems[0].Text);
+                        MessageBox.Show("Failed to delete " + Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text);
                     }
                 }
             }
+            query();
+            checkBox1.Checked = false;
         }
 
         private void query()
@@ -96,8 +107,33 @@ namespace Disk_Organizer
                         }
                     }
                 }
+                CheckBox box = new CheckBox();
+                
+                foreach (string film in Filtered)
+                {
+                    FileInfo f = new FileInfo(film);
+                    long s1 = f.Length;
+                    double s2 = (double)s1 / 1024;
+                    string size = " KB";
+                    if (s1 > 1024*1024 && s1< 1024 * 1024*1024)
+                    {
+                        size = " MB";
+                        s2 = (double)s1 / (1024*1024);
+                    }
+                    else if (s1 > 1024 * 1024 * 1024)
+                    {
+                        size = " GB";
+                        s2 = (double)s1 / (1024 * 1024 * 1024);
+                    }
+                    add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
+                }
+                listView1.AutoResizeColumn(0,ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
 
-                foreach (string film in Filtered) add(Path.GetFileName(film), Path.GetDirectoryName(film));
             }
             else MessageBox.Show("No such Folder");
 
@@ -112,6 +148,7 @@ namespace Disk_Organizer
 
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
+            checkBox1.Checked = false;
             query();
         }
 
@@ -123,6 +160,31 @@ namespace Disk_Organizer
         private void Folder_Path_Click(object sender, EventArgs e)
         {
             Folder_Err.Clear();
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked)
+            {
+                for (int i = 0; i < listView1.Items.Count; i++)
+                {
+                    listView1.Items[i].Checked = true;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < listView1.Items.Count; i++)
+                {
+                    listView1.Items[i].Checked = false;
+                }
+
+            }
+        }
+
+        private void listView1_ColumnWidthChanging(object sender, ColumnWidthChangingEventArgs e)
+        {
+            e.Cancel = true;
+            e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
         }
     }
 }
