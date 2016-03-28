@@ -51,7 +51,7 @@
             this.Browes_Folder.TabIndex = 0;
             this.Browes_Folder.Text = "...";
             this.Browes_Folder.UseVisualStyleBackColor = true;
-            this.Browes_Folder.Click += new System.EventHandler(this.Browes_Folder_Click);
+            this.Browes_Folder.Click += new System.EventHandler(this.Browse_Folder_Click);
             // 
             // Folder_Path
             // 
