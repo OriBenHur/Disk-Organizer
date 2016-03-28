@@ -12,11 +12,12 @@ namespace Disk_Organizer
 {
     public partial class Disk_Organizer : Form
     {
+        private int sortColumn = -1;
         public Disk_Organizer()
         {
             InitializeComponent();
         }
-
+        //private ListViewColumnSorter lvwColumnSorter;
         private void Browes_Folder_Click(object sender, EventArgs e)
         {
 
@@ -120,7 +121,7 @@ namespace Disk_Organizer
                     }
                     add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
                 }
-                listView1.AutoResizeColumn(0,ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(0,ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -187,6 +188,34 @@ namespace Disk_Organizer
         {
             e.Cancel = true;
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
+        }
+
+        private void listView1_ColumnClick(object sender,
+                                   System.Windows.Forms.ColumnClickEventArgs e)
+        {
+            // Determine whether the column is the same as the last column clicked.
+            if (e.Column != sortColumn)
+            {
+                // Set the sort column to the new column.
+                sortColumn = e.Column;
+                // Set the sort order to ascending by default.
+                listView1.Sorting = SortOrder.Ascending;
+            }
+            else
+            {
+                // Determine what the last sort order was and change it.
+                if (listView1.Sorting == SortOrder.Ascending)
+                    listView1.Sorting = SortOrder.Descending;
+                else
+                    listView1.Sorting = SortOrder.Ascending;
+            }
+
+            // Call the sort method to manually sort.
+            listView1.Sort();
+            // Set the ListViewItemSorter property to a new ListViewItemComparer
+            // object.
+            this.listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
+                                                              listView1.Sorting);
         }
     }
 }
