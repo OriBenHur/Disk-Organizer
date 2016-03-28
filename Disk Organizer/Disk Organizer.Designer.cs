@@ -45,7 +45,7 @@
             // 
             // Browes_Folder
             // 
-            this.Browes_Folder.Location = new System.Drawing.Point(272, 25);
+            this.Browes_Folder.Location = new System.Drawing.Point(245, 25);
             this.Browes_Folder.Name = "Browes_Folder";
             this.Browes_Folder.Size = new System.Drawing.Size(28, 23);
             this.Browes_Folder.TabIndex = 0;
@@ -55,7 +55,7 @@
             // 
             // Folder_Path
             // 
-            this.Folder_Path.Location = new System.Drawing.Point(82, 26);
+            this.Folder_Path.Location = new System.Drawing.Point(54, 26);
             this.Folder_Path.Name = "Folder_Path";
             this.Folder_Path.Size = new System.Drawing.Size(189, 20);
             this.Folder_Path.TabIndex = 1;
@@ -91,7 +91,7 @@
             // 
             // Filter
             // 
-            this.Filter.Location = new System.Drawing.Point(82, 63);
+            this.Filter.Location = new System.Drawing.Point(54, 63);
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
@@ -99,7 +99,7 @@
             // 
             // Set_refrash_btn
             // 
-            this.Set_refrash_btn.Location = new System.Drawing.Point(301, 25);
+            this.Set_refrash_btn.Location = new System.Drawing.Point(275, 25);
             this.Set_refrash_btn.Name = "Set_refrash_btn";
             this.Set_refrash_btn.Size = new System.Drawing.Size(117, 23);
             this.Set_refrash_btn.TabIndex = 5;
@@ -110,7 +110,7 @@
             // Folder_label
             // 
             this.Folder_label.AutoSize = true;
-            this.Folder_label.Location = new System.Drawing.Point(37, 34);
+            this.Folder_label.Location = new System.Drawing.Point(12, 34);
             this.Folder_label.Name = "Folder_label";
             this.Folder_label.Size = new System.Drawing.Size(39, 13);
             this.Folder_label.TabIndex = 6;
@@ -119,7 +119,7 @@
             // Filter_label
             // 
             this.Filter_label.AutoSize = true;
-            this.Filter_label.Location = new System.Drawing.Point(37, 69);
+            this.Filter_label.Location = new System.Drawing.Point(12, 69);
             this.Filter_label.Name = "Filter_label";
             this.Filter_label.Size = new System.Drawing.Size(32, 13);
             this.Filter_label.TabIndex = 7;

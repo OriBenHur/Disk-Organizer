@@ -29,10 +29,10 @@ namespace Disk_Organizer
         }
 
         // add method used to add new item to the listView
-        private void add(string box, string path, string name ,string size)
+        private void add(string box, string path, string name, string size)
         {
-           
-            string[] row = { box, path, name,size};
+
+            string[] row = { box, path, name, size };
             ListViewItem item = new ListViewItem(row);
             listView1.Items.Add(item);
         }
@@ -60,7 +60,7 @@ namespace Disk_Organizer
                     try
                     {   //Item.SubItems[2].Text = Folder Path
                         //Item.SubItems[1].Text = File Name
-                        File.Delete(Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text); 
+                        File.Delete(Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text);
                     }
                     catch
                     {
@@ -113,10 +113,10 @@ namespace Disk_Organizer
                     long s1 = f.Length;
                     double s2 = (double)s1 / 1024;
                     string size = " KB";
-                    if (s1 > 1024*1024 && s1< 1024 * 1024*1024)
+                    if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
                     {
                         size = " MB";
-                        s2 = (double)s1 / (1024*1024);
+                        s2 = (double)s1 / (1024 * 1024);
                     }
                     else if (s1 > 1024 * 1024 * 1024)
                     {
@@ -125,7 +125,7 @@ namespace Disk_Organizer
                     }
                     add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
                 }
-                listView1.AutoResizeColumn(0,ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -177,7 +177,7 @@ namespace Disk_Organizer
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBox1.Checked)
+            if (checkBox1.Checked)
             {
                 for (int i = 0; i < listView1.Items.Count; i++)
                 {
@@ -190,7 +190,6 @@ namespace Disk_Organizer
                 {
                     listView1.Items[i].Checked = false;
                 }
-
             }
         }
 
@@ -221,7 +220,7 @@ namespace Disk_Organizer
             }
 
             // Call the sort method to manually sort.
-            listView1.Sort();
+            //listView1.Sort();
 
             // Set the ListViewItemSorter property to a new ListViewItemComparer object.
             this.listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
