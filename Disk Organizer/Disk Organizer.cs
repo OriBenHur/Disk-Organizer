@@ -44,21 +44,14 @@ namespace Disk_Organizer
 
         private void Disk_Organizer_Load(object sender, EventArgs e)
         {
-            //Filter.Text = "*";
-            //CheckBox box = new CheckBox();
             listView1.View = View.Details;
             listView1.FullRowSelect = true;
             listView1.Columns.Add("", 24);
             listView1.Columns.Add("Name");
             listView1.Columns.Add("Path");
             listView1.Columns.Add("File Size");
-            //listView1.HeaderStyle =  ;
             listView1.CheckBoxes = true;
-            //listView1.OwnerDraw = true;
-
-            //listView1.Columns.Insert(0, box);
-
-            Filter_toolTip.SetToolTip(Filter, "For Multi Filter seperate the strings with white spase");
+            Filter_toolTip.SetToolTip(Filter, "For multi filter separate the strings with whitespace");
         }
 
         private void Delete_btn_Click(object sender, EventArgs e)
@@ -107,7 +100,7 @@ namespace Disk_Organizer
                         }
                     }
                 }
-                CheckBox box = new CheckBox();
+                //CheckBox box = new CheckBox();
                 
                 foreach (string film in Filtered)
                 {
@@ -142,8 +135,17 @@ namespace Disk_Organizer
         {
             Folder_Err.Clear();
             if (Folder_Path.Text == "")
+            {
+                Filter.Text = "";
+                checkBox1.Checked = false;
                 Folder_Err.SetError(Filter, "You must selcet folder first");
-            else query();
+
+            }
+            else
+            {
+                checkBox1.Checked = false;
+                query();
+            }
         }
 
         private void Set_refrash_btn_Click(object sender, EventArgs e)
