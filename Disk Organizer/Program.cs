@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Disk_Organizer
@@ -14,7 +13,7 @@ namespace Disk_Organizer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Disk_Organizer());
+            Application.Run(new DiskOrganizer());
         }
     }
 }

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-using FolderSelect;
 using System.IO;
 
 namespace Disk_Organizer
 {
-    public partial class Disk_Organizer : Form
+    public partial class DiskOrganizer : Form
     {
-        private int sortColumn = -1;
-        public Disk_Organizer()
+        //private int _sortColumn = -1;
+        public DiskOrganizer()
         {
             InitializeComponent();
         }
@@ -21,19 +16,19 @@ namespace Disk_Organizer
         // browse method
         private void Browse_Folder_Click(object sender, EventArgs e)
         {
-            FolderSelectDialog fs = new FolderSelectDialog();
+            var fs = new FolderSelectDialog();
             Folder_Err.Clear();
-            bool result = fs.ShowDialog();
+            var result = fs.ShowDialog();
             if (result) Folder_Path.Text = fs.FileName;
-            else return;
+
         }
 
         // add method used to add new item to the listView
-        private void add(string box, string path, string name, string size)
+        private void Add(string box, string path, string name, string size)
         {
 
             string[] row = { box, path, name, size };
-            ListViewItem item = new ListViewItem(row);
+            var item = new ListViewItem(row);
             listView1.Items.Add(item);
         }
 
@@ -53,66 +48,64 @@ namespace Disk_Organizer
         // try to delete the checked filse 
         private void Delete_btn_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem Item in listView1.Items)
+            foreach (ListViewItem item in listView1.Items)
             {
-                if (Item.Checked)
+                if (!item.Checked) continue;
+                try
+                {   //Item.SubItems[2].Text = Folder Path
+                    //Item.SubItems[1].Text = File Name
+                    File.Delete(item.SubItems[2].Text + @"\" + item.SubItems[1].Text);
+                }
+                catch
                 {
-                    try
-                    {   //Item.SubItems[2].Text = Folder Path
-                        //Item.SubItems[1].Text = File Name
-                        File.Delete(Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Failed to delete " + Item.SubItems[2].Text + "\\" + Item.SubItems[1].Text);
-                    }
+                    MessageBox.Show(@"Failed to delete " + item.SubItems[2].Text + @"\" + item.SubItems[1].Text);
                 }
             }
-            query();
+            Query();
             checkBox1.Checked = false;
         }
         // Main method, search for all matching objects in a respective path 
-        // if the path is not empty  or not invalid run a query matching the filters configured
-        private void query()
+        // if the path is not empty or not invalid run a query matching the filters configured
+        private void Query()
         {
             Folder_Err.Clear();
             listView1.Items.Clear();
+            // helper List that will be used in leter stage
+            var filtered = new List<string>();
             if (Directory.Exists(Folder_Path.Text))
             {
                 // allfiles holds all the files in the given path
-                string[] allfiles = Directory.GetFiles(Folder_Path.Text, "*.*", SearchOption.AllDirectories);
+                var allfiles = GetFileList("*.*",Folder_Path.Text);
 
                 // searchstrings splite the string given in the Filter Text Field
-                string[] searchstrings = Filter.Text.Split(' ');
+                var searchstrings = Filter.Text.Split(' ');
 
-                // helper List that will be used in leter stage
-                List<string> Filtered = new List<string>();
+                
 
                 // loop over the allfiles array
                 //and filtering only the needed files into Filtered List
-                foreach (string name in allfiles)
+                foreach (var name in allfiles)
                 {
-                    string ext = Path.GetExtension(name).ToLower();
-                    string FileName = Path.GetFileName(name);
-                    foreach (string arg in searchstrings)
+                    var extension = Path.GetExtension(name);
+                    if (extension == null) continue;
+                    var ext = extension.ToLower();
+                    var fileName = Path.GetFileName(name);
+                    if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+                    foreach (var arg in searchstrings)
                     {
-                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
-                        {
-                            if (Path.GetFileName(name.ToLower()).Contains(arg.ToLower()))
-                            {
-                                if (!Filtered.Contains(name)) Filtered.Add(name);
-                            }
-                        }
+                        if (!ext.Equals(".mp4") && !ext.Equals(".avi") && !ext.Equals(".mkv")) continue;
+                        if (!Path.GetFileName(name.ToLower()).Contains(arg.ToLower())) continue;
+                        if (!filtered.Contains(name)) filtered.Add(name);
                     }
                 }
 
                 // after we finished filtering the files we will add them to the ListView
-                foreach (string film in Filtered)
+                foreach (var film in filtered)
                 {
-                    FileInfo f = new FileInfo(film);
-                    long s1 = f.Length;
-                    double s2 = (double)s1 / 1024;
-                    string size = " KB";
+                    var f = new FileInfo(film);
+                    var s1 = f.Length;
+                    var s2 = (double)s1 / 1024;
+                    var size = " KB";
                     if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
                     {
                         size = " MB";
@@ -123,7 +116,7 @@ namespace Disk_Organizer
                         size = " GB";
                         s2 = (double)s1 / (1024 * 1024 * 1024);
                     }
-                    add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
+                    Add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
                 }
                 listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -133,7 +126,7 @@ namespace Disk_Organizer
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
 
             }
-            else MessageBox.Show("No such Folder");
+            else MessageBox.Show(@"No such Folder");
 
         }
 
@@ -152,7 +145,7 @@ namespace Disk_Organizer
             else
             {
                 checkBox1.Checked = false;
-                query();
+                Query();
             }
         }
 
@@ -161,7 +154,7 @@ namespace Disk_Organizer
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
             checkBox1.Checked = false;
-            query();
+            Query();
         }
 
         // Clear the error provider when folder path change
@@ -179,14 +172,14 @@ namespace Disk_Organizer
         {
             if (checkBox1.Checked)
             {
-                for (int i = 0; i < listView1.Items.Count; i++)
+                for (var i = 0; i < listView1.Items.Count; i++)
                 {
                     listView1.Items[i].Checked = true;
                 }
             }
             else
             {
-                for (int i = 0; i < listView1.Items.Count; i++)
+                for (var i = 0; i < listView1.Items.Count; i++)
                 {
                     listView1.Items[i].Checked = false;
                 }
@@ -199,32 +192,49 @@ namespace Disk_Organizer
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
         }
 
-        private void listView1_ColumnClick(object sender,
-                                   System.Windows.Forms.ColumnClickEventArgs e)
+        //private void listView1_ColumnClick(object sender,
+        //                           ColumnClickEventArgs e)
+        //{
+        //    // Determine whether the column is the same as the last column clicked.
+        //    if (e.Column != _sortColumn)
+        //    {
+        //        // Set the sort column to the new column.
+        //        _sortColumn = e.Column;
+        //        // Set the sort order to ascending by default.
+        //        listView1.Sorting = SortOrder.Ascending;
+        //    }
+        //    else
+        //    {
+        //        // Determine what the last sort order was and change it.
+        //        listView1.Sorting = listView1.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        //    }
+
+        //    // Call the sort method to manually sort.
+        //    //listView1.Sort();
+
+        //    // Set the ListViewItemSorter property to a new ListViewItemComparer object.
+        //    listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
+        //                                                      listView1.Sorting);
+        //}
+
+        public static IEnumerable<string> GetFileList(string fileSearchPattern, string rootFolderPath)
         {
-            // Determine whether the column is the same as the last column clicked.
-            if (e.Column != sortColumn)
+            var pending = new Queue<string>();
+            pending.Enqueue(rootFolderPath);
+            while (pending.Count > 0)
             {
-                // Set the sort column to the new column.
-                sortColumn = e.Column;
-                // Set the sort order to ascending by default.
-                listView1.Sorting = SortOrder.Ascending;
+                rootFolderPath = pending.Dequeue();
+                var tmp = Directory.GetFiles(rootFolderPath, fileSearchPattern);
+                for (var i = 0; i < tmp.Length; i++)
+                {
+                    yield return tmp[i];
+                }
+                tmp = Directory.GetDirectories(rootFolderPath);
+                for (var i = 0; i < tmp.Length; i++)
+                {
+                    pending.Enqueue(tmp[i]);
+                }
             }
-            else
-            {
-                // Determine what the last sort order was and change it.
-                if (listView1.Sorting == SortOrder.Ascending)
-                    listView1.Sorting = SortOrder.Descending;
-                else
-                    listView1.Sorting = SortOrder.Ascending;
-            }
-
-            // Call the sort method to manually sort.
-            //listView1.Sort();
-
-            // Set the ListViewItemSorter property to a new ListViewItemComparer object.
-            this.listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
-                                                              listView1.Sorting);
         }
     }
 }

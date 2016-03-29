@@ -1,6 +1,6 @@
 ﻿namespace Disk_Organizer
 {
-    partial class Disk_Organizer
+    partial class DiskOrganizer
     {
         /// <summary>
         /// Required designer variable.
@@ -75,7 +75,7 @@
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
-            this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
+            //this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
             this.listView1.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listView1_ColumnWidthChanging);
             // 
             // Delete_btn

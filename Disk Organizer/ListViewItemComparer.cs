@@ -6,17 +6,17 @@ namespace Disk_Organizer
 {
     class ListViewItemComparer : IComparer
     {
-        private int col;
-        private SortOrder order;
+        private readonly int _col;
+        private readonly SortOrder _order;
         public ListViewItemComparer()
         {
-            col = 0;
-            order = SortOrder.Ascending;
+            _col = 0;
+            _order = SortOrder.Ascending;
         }
         public ListViewItemComparer(int column, SortOrder order)
         {
-            col = column;
-            this.order = order;
+            _col = column;
+            _order = order;
         }
 
         public int Compare(object x, object y)
@@ -26,10 +26,10 @@ namespace Disk_Organizer
             try
             {
                 // Parse the two objects passed as a parameter as a DateTime.
-                System.DateTime firstDate =
-                        DateTime.Parse(((ListViewItem)x).SubItems[col].Text);
-                System.DateTime secondDate =
-                        DateTime.Parse(((ListViewItem)y).SubItems[col].Text);
+                var firstDate =
+                        DateTime.Parse(((ListViewItem)x).SubItems[_col].Text);
+                var secondDate =
+                        DateTime.Parse(((ListViewItem)y).SubItems[_col].Text);
                 // Compare the two dates.
                 returnVal = DateTime.Compare(firstDate, secondDate);
             }
@@ -38,11 +38,11 @@ namespace Disk_Organizer
             catch
             {
                 // Compare the two items as a string.
-                returnVal = String.Compare(((ListViewItem)x).SubItems[col].Text,
-                            ((ListViewItem)y).SubItems[col].Text);
+                returnVal = string.CompareOrdinal(((ListViewItem)x).SubItems[_col].Text,
+                            ((ListViewItem)y).SubItems[_col].Text);
             }
             // Determine whether the sort order is descending.
-            if (order == SortOrder.Descending)
+            if (_order == SortOrder.Descending)
                 // Invert the value returned by String.Compare.
                 returnVal *= -1;
             return returnVal;

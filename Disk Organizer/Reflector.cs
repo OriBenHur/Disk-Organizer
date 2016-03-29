@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace FolderSelect
+namespace Disk_Organizer
 {
 	/// <summary>
 	/// This class is from the Front-End for Dosbox and is used to present a 'vista' dialog box to select folders.
@@ -15,8 +15,8 @@ namespace FolderSelect
 	{
 		#region variables
 
-		string m_ns;
-		Assembly m_asmb;
+	    private readonly string _mNs;
+	    private readonly Assembly _mAsmb;
 
 		#endregion
 
@@ -37,13 +37,13 @@ namespace FolderSelect
 		/// <param name="ns">The namespace containing types to be used</param>
 		public Reflector(string an, string ns)
 		{
-			m_ns = ns;
-			m_asmb = null;
-			foreach (AssemblyName aN in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
+			_mNs = ns;
+			_mAsmb = null;
+			foreach (var aN in Assembly.GetExecutingAssembly().GetReferencedAssemblies())
 			{
 				if (aN.FullName.StartsWith(an))
 				{
-					m_asmb = Assembly.Load(aN);
+					_mAsmb = Assembly.Load(aN);
 					break;
 				}
 			}
@@ -61,15 +61,16 @@ namespace FolderSelect
 		public Type GetType(string typeName)
 		{
 			Type type = null;
-			string[] names = typeName.Split('.');
+			var names = typeName.Split('.');
 
 			if (names.Length > 0)
-				type = m_asmb.GetType(m_ns + "." + names[0]);
+				type = _mAsmb.GetType(_mNs + "." + names[0]);
 
-			for (int i = 1; i < names.Length; ++i) {
-				type = type.GetNestedType(names[i], BindingFlags.NonPublic);
+			for (var i = 1; i < names.Length; ++i)
+			{
+			    type = type?.GetNestedType(names[i], BindingFlags.NonPublic);
 			}
-			return type;
+		    return type;
 		}
 
 		/// <summary>
@@ -80,13 +81,17 @@ namespace FolderSelect
 		/// <returns>An instantiated type</returns>
 		public object New(string name, params object[] parameters)
 		{
-			Type type = GetType(name);
+			var type = GetType(name);
 
-			ConstructorInfo[] ctorInfos = type.GetConstructors();
-			foreach (ConstructorInfo ci in ctorInfos) {
+			var ctorInfos = type.GetConstructors();
+			foreach (var ci in ctorInfos) {
 				try {
 					return ci.Invoke(parameters);
-				} catch { }
+				}
+				catch
+				{
+				    // ignored
+				}
 			}
 
 			return null;
@@ -138,7 +143,7 @@ namespace FolderSelect
 		/// <param name="parameters">The parameters to pass to function 'func'</param>
 		/// <returns>The result of the function invocation</returns>
 		public object CallAs2(Type type, object obj, string func, object[] parameters) {
-			MethodInfo methInfo = type.GetMethod(func, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			var methInfo = type.GetMethod(func, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			return methInfo.Invoke(obj, parameters);
 		}
 
@@ -161,7 +166,7 @@ namespace FolderSelect
 		/// <param name="prop">The property name</param>
 		/// <returns>The property value</returns>
 		public object GetAs(Type type, object obj, string prop) {
-			PropertyInfo propInfo = type.GetProperty(prop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			var propInfo = type.GetProperty(prop, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 			return propInfo.GetValue(obj, null);
 		}
 
@@ -172,8 +177,8 @@ namespace FolderSelect
 		/// <param name="name">The name of the value</param>
 		/// <returns>The enum value</returns>
 		public object GetEnum(string typeName, string name) {
-			Type type = GetType(typeName);
-			FieldInfo fieldInfo = type.GetField(name);
+			var type = GetType(typeName);
+			var fieldInfo = type.GetField(name);
 			return fieldInfo.GetValue(null);
 		}
 

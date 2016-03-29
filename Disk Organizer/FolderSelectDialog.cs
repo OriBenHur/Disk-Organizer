@@ -6,7 +6,7 @@ using System.Windows.Forms;
 // a vista-style dialog.
 // ------------------------------------------------------------------
 
-namespace FolderSelect
+namespace Disk_Organizer
 {
 	/// <summary>
 	/// Wraps System.Windows.Forms.OpenFileDialog to make it present
@@ -15,21 +15,23 @@ namespace FolderSelect
 	public class FolderSelectDialog
 	{
 		// Wrapped dialog
-		System.Windows.Forms.OpenFileDialog ofd = null;
+	    readonly OpenFileDialog _ofd;
 
 		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public FolderSelectDialog()
 		{
-			ofd = new System.Windows.Forms.OpenFileDialog();
+		    _ofd = new OpenFileDialog
+		    {
+		        Filter = @"Folders|",
+		        AddExtension = false,
+		        CheckFileExists = false,
+		        DereferenceLinks = true,
+		        Multiselect = false
+		    };
 
-			ofd.Filter = "Folders|\n";
-			ofd.AddExtension = false;
-			ofd.CheckFileExists = false;
-			ofd.DereferenceLinks = true;
-			ofd.Multiselect = false;
-            
+
 		}
 
 		#region Properties
@@ -39,8 +41,8 @@ namespace FolderSelect
 		/// </summary>
 		public string InitialDirectory
 		{
-			get { return ofd.InitialDirectory; }
-			set { ofd.InitialDirectory = value == null || value.Length == 0 ? Environment.CurrentDirectory : value; }
+			get { return _ofd.InitialDirectory; }
+			set { _ofd.InitialDirectory = string.IsNullOrEmpty(value) ? Environment.CurrentDirectory : value; }
 		}
 
 		/// <summary>
@@ -48,19 +50,16 @@ namespace FolderSelect
 		/// </summary>
 		public string Title
 		{
-			get { return ofd.Title; }
-			set { ofd.Title = value == null ? "Select a folder" : value; }
+			get { return _ofd.Title; }
+			set { _ofd.Title = value ?? "Select a folder"; }
 		}
 
 		/// <summary>
 		/// Gets the selected folder
 		/// </summary>
-		public string FileName
-		{
-			get { return ofd.FileName; }
-		}
+		public string FileName => _ofd.FileName;
 
-		#endregion
+	    #endregion
 
 		#region Methods
 
@@ -80,28 +79,28 @@ namespace FolderSelect
 		/// <returns>True if the user presses OK else false</returns>
 		public bool ShowDialog(IntPtr hWndOwner)
 		{
-			bool flag = false;
+			bool flag;
 
 			if (Environment.OSVersion.Version.Major >= 6)
 			{
 				var r = new Reflector("System.Windows.Forms");
 
 				uint num = 0;
-				Type typeIFileDialog = r.GetType("FileDialogNative.IFileDialog");
-				object dialog = r.Call(ofd, "CreateVistaDialog");
-				r.Call(ofd, "OnBeforeVistaDialog", dialog);
+				var typeIFileDialog = r.GetType("FileDialogNative.IFileDialog");
+				var dialog = r.Call(_ofd, "CreateVistaDialog");
+				r.Call(_ofd, "OnBeforeVistaDialog", dialog);
 
-				uint options = (uint)r.CallAs(typeof(System.Windows.Forms.FileDialog), ofd, "GetOptions");
+				var options = (uint)r.CallAs(typeof(FileDialog), _ofd, "GetOptions");
 				options |= (uint)r.GetEnum("FileDialogNative.FOS", "FOS_PICKFOLDERS");
 				r.CallAs(typeIFileDialog, dialog, "SetOptions", options);
 
-				object pfde = r.New("FileDialog.VistaDialogEvents", ofd);
-				object[] parameters = new object[] { pfde, num };
+				var pfde = r.New("FileDialog.VistaDialogEvents", _ofd);
+				var parameters = new[] { pfde, num };
 				r.CallAs2(typeIFileDialog, dialog, "Advise", parameters);
 				num = (uint)parameters[1];
 				try
 				{
-					int num2 = (int)r.CallAs(typeIFileDialog, dialog, "Show", hWndOwner);
+					var num2 = (int)r.CallAs(typeIFileDialog, dialog, "Show", hWndOwner);
 					flag = 0 == num2;
 				}
 				finally
@@ -112,12 +111,14 @@ namespace FolderSelect
 			}
 			else
 			{
-				var fbd = new FolderBrowserDialog();
-				fbd.Description = this.Title;
-				fbd.SelectedPath = this.InitialDirectory;
-				fbd.ShowNewFolderButton = false;
-				if (fbd.ShowDialog(new WindowWrapper(hWndOwner)) != DialogResult.OK) return false;
-				ofd.FileName = fbd.SelectedPath;
+			    var fbd = new FolderBrowserDialog
+			    {
+			        Description = Title,
+			        SelectedPath = InitialDirectory,
+			        ShowNewFolderButton = false
+			    };
+			    if (fbd.ShowDialog(new WindowWrapper(hWndOwner)) != DialogResult.OK) return false;
+				_ofd.FileName = fbd.SelectedPath;
 				flag = true;
 			}
 
@@ -130,7 +131,7 @@ namespace FolderSelect
 	/// <summary>
 	/// Creates IWin32Window around an IntPtr
 	/// </summary>
-	public class WindowWrapper : System.Windows.Forms.IWin32Window
+	public class WindowWrapper : IWin32Window
 	{
 		/// <summary>
 		/// Constructor
@@ -138,18 +139,13 @@ namespace FolderSelect
 		/// <param name="handle">Handle to wrap</param>
 		public WindowWrapper(IntPtr handle)
 		{
-			_hwnd = handle;
+			Handle = handle;
 		}
 
 		/// <summary>
 		/// Original ptr
 		/// </summary>
-		public IntPtr Handle
-		{
-			get { return _hwnd; }
-		}
-
-		private IntPtr _hwnd;
+		public IntPtr Handle { get; }
 	}
 
 }
