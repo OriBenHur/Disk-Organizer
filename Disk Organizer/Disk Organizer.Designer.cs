@@ -40,12 +40,16 @@
             this.Filter_toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.Folder_Err = new System.Windows.Forms.ErrorProvider(this.components);
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.Instant_Match_checkBox = new System.Windows.Forms.CheckBox();
+            this.Filter_button = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.Count = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).BeginInit();
             this.SuspendLayout();
             // 
             // Browes_Folder
             // 
-            this.Browes_Folder.Location = new System.Drawing.Point(245, 25);
+            this.Browes_Folder.Location = new System.Drawing.Point(245, 19);
             this.Browes_Folder.Name = "Browes_Folder";
             this.Browes_Folder.Size = new System.Drawing.Size(28, 23);
             this.Browes_Folder.TabIndex = 0;
@@ -55,7 +59,7 @@
             // 
             // Folder_Path
             // 
-            this.Folder_Path.Location = new System.Drawing.Point(54, 26);
+            this.Folder_Path.Location = new System.Drawing.Point(54, 20);
             this.Folder_Path.Name = "Folder_Path";
             this.Folder_Path.Size = new System.Drawing.Size(189, 20);
             this.Folder_Path.TabIndex = 1;
@@ -75,7 +79,6 @@
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
-            //this.listView1.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listView1_ColumnClick);
             this.listView1.ColumnWidthChanging += new System.Windows.Forms.ColumnWidthChangingEventHandler(this.listView1_ColumnWidthChanging);
             // 
             // Delete_btn
@@ -91,7 +94,7 @@
             // 
             // Filter
             // 
-            this.Filter.Location = new System.Drawing.Point(54, 63);
+            this.Filter.Location = new System.Drawing.Point(54, 57);
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
@@ -99,7 +102,7 @@
             // 
             // Set_refrash_btn
             // 
-            this.Set_refrash_btn.Location = new System.Drawing.Point(275, 25);
+            this.Set_refrash_btn.Location = new System.Drawing.Point(275, 19);
             this.Set_refrash_btn.Name = "Set_refrash_btn";
             this.Set_refrash_btn.Size = new System.Drawing.Size(117, 23);
             this.Set_refrash_btn.TabIndex = 5;
@@ -110,7 +113,7 @@
             // Folder_label
             // 
             this.Folder_label.AutoSize = true;
-            this.Folder_label.Location = new System.Drawing.Point(12, 34);
+            this.Folder_label.Location = new System.Drawing.Point(12, 28);
             this.Folder_label.Name = "Folder_label";
             this.Folder_label.Size = new System.Drawing.Size(39, 13);
             this.Folder_label.TabIndex = 6;
@@ -119,7 +122,7 @@
             // Filter_label
             // 
             this.Filter_label.AutoSize = true;
-            this.Filter_label.Location = new System.Drawing.Point(12, 69);
+            this.Filter_label.Location = new System.Drawing.Point(12, 63);
             this.Filter_label.Name = "Filter_label";
             this.Filter_label.Size = new System.Drawing.Size(32, 13);
             this.Filter_label.TabIndex = 7;
@@ -139,11 +142,53 @@
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // Disk_Organizer
+            // Instant_Match_checkBox
+            // 
+            this.Instant_Match_checkBox.AutoSize = true;
+            this.Instant_Match_checkBox.Location = new System.Drawing.Point(325, 60);
+            this.Instant_Match_checkBox.Name = "Instant_Match_checkBox";
+            this.Instant_Match_checkBox.Size = new System.Drawing.Size(91, 17);
+            this.Instant_Match_checkBox.TabIndex = 9;
+            this.Instant_Match_checkBox.Text = "Instant Match";
+            this.Instant_Match_checkBox.UseVisualStyleBackColor = true;
+            this.Instant_Match_checkBox.CheckedChanged += new System.EventHandler(this.Instant_Match_checkBox_CheckedChanged);
+            // 
+            // Filter_button
+            // 
+            this.Filter_button.Location = new System.Drawing.Point(245, 56);
+            this.Filter_button.Name = "Filter_button";
+            this.Filter_button.Size = new System.Drawing.Size(75, 23);
+            this.Filter_button.TabIndex = 10;
+            this.Filter_button.Text = "Filter";
+            this.Filter_button.UseVisualStyleBackColor = true;
+            this.Filter_button.Click += new System.EventHandler(this.Filter_button_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(0, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 11;
+            this.label1.Text = "label1";
+            // 
+            // Count
+            // 
+            this.Count.AutoSize = true;
+            this.Count.Location = new System.Drawing.Point(12, 394);
+            this.Count.Name = "Count";
+            this.Count.Size = new System.Drawing.Size(0, 13);
+            this.Count.TabIndex = 12;
+            // 
+            // DiskOrganizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 419);
+            this.Controls.Add(this.Count);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.Filter_button);
+            this.Controls.Add(this.Instant_Match_checkBox);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.Filter_label);
             this.Controls.Add(this.Folder_label);
@@ -153,7 +198,7 @@
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.Folder_Path);
             this.Controls.Add(this.Browes_Folder);
-            this.Name = "Disk_Organizer";
+            this.Name = "DiskOrganizer";
             this.Text = "Disk_Organizer";
             this.Load += new System.EventHandler(this.Disk_Organizer_Load);
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).EndInit();
@@ -175,5 +220,9 @@
         private System.Windows.Forms.ToolTip Filter_toolTip;
         private System.Windows.Forms.ErrorProvider Folder_Err;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.Button Filter_button;
+        private System.Windows.Forms.CheckBox Instant_Match_checkBox;
+        private System.Windows.Forms.Label Count;
+        private System.Windows.Forms.Label label1;
     }
 }
