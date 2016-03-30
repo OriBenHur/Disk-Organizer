@@ -44,6 +44,8 @@
             this.Filter_button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.Count = new System.Windows.Forms.Label();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).BeginInit();
             this.SuspendLayout();
             // 
@@ -180,11 +182,19 @@
             this.Count.Size = new System.Drawing.Size(0, 13);
             this.Count.TabIndex = 12;
             // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(12, 383);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(665, 23);
+            this.progressBar1.TabIndex = 13;
+            // 
             // DiskOrganizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(798, 419);
+            this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.Count);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Filter_button);
@@ -201,6 +211,7 @@
             this.Name = "DiskOrganizer";
             this.Text = "Disk_Organizer";
             this.Load += new System.EventHandler(this.Disk_Organizer_Load);
+            this.Shown += new System.EventHandler(this.DiskOrganizer_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -224,5 +235,7 @@
         private System.Windows.Forms.CheckBox Instant_Match_checkBox;
         private System.Windows.Forms.Label Count;
         private System.Windows.Forms.Label label1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }

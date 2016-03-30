@@ -25,12 +25,20 @@ namespace Disk_Organizer
             Folder_Path.Text = fs.FileName;
         }
 
-        // add method used to add new item to the listView
-        private void Add(string box, string path, string name, string size)
+        public void Counter()
         {
-            string[] row = { box, path, name, size };
+            if (List.Count > 1 || List.Count == 0)
+                Count.Text = List.Count + @" Items in the List";
+            else Count.Text = List.Count + @" Item in the List";
+        }
+
+        // add method used to add new item to the listView
+        private void Add(string box,string index, string path, string name, string size)
+        {
+            string[] row = { box,index , path, name, size };
             var item = new ListViewItem(row);
             listView1.Items.Add(item);
+            progressBar1.PerformStep();
         }
 
         // initial form load configuration 
@@ -39,6 +47,7 @@ namespace Disk_Organizer
             listView1.View = View.Details;
             listView1.FullRowSelect = true;
             listView1.Columns.Add("", 24);
+            listView1.Columns.Add("#");
             listView1.Columns.Add("Name");
             listView1.Columns.Add("Path");
             listView1.Columns.Add("File Size");
@@ -49,33 +58,30 @@ namespace Disk_Organizer
         // try to delete the checked filse 
         private void Delete_btn_Click(object sender, EventArgs e)
         {
-            
+
             foreach (ListViewItem item in listView1.Items)
             {
                 if (!item.Checked) continue;
                 try
                 {
-                    
+
                     //item.SubItems[2].Text = Folder Path
-                    //item.SubItems[1].Text = File Name
-                    File.Delete(item.SubItems[2].Text + @"\" + item.SubItems[1].Text);
+                    //item.SubItems[3].Text = File Name
+                    File.Delete(item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
 
                 }
                 catch
                 {
-                    MessageBox.Show(@"Failed to delete " + item.SubItems[2].Text + @"\" + item.SubItems[1].Text);
+                    MessageBox.Show(@"Failed to delete " + item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
                 }
             }
             checkBox1.Checked = false;
-            Filter.Text = "";
+            //Filter.Text = "";
             Query();
-            if(List.Count >1 || List.Count == 0)
-            Count.Text = List.Count + @" Items in List";
-            else Count.Text = List.Count + @" Item in List";
-            //GetCout();
+            Counter();
         }
 
-        public List<string> List 
+        public List<string> List
         {
             get { return _filtered; }
             set { _filtered = value; }
@@ -92,7 +98,7 @@ namespace Disk_Organizer
             var filtered = new List<string>();
             List = filtered;
             // helper List that will be used in leter stage
-            
+
             if (Directory.Exists(Folder_Path.Text))
             {
                 // allfiles holds all the files in the given path
@@ -103,6 +109,7 @@ namespace Disk_Organizer
 
                 // loop over the allfiles array
                 //and filtering only the needed files into Filtered List
+                var i = 1;
                 foreach (var name in allfiles)
                 {
                     var extension = Path.GetExtension(name);
@@ -116,12 +123,19 @@ namespace Disk_Organizer
                         if (!Path.GetFileName(name.ToLower()).Contains(arg.ToLower())) continue;
                         if (filtered.Contains(name)) continue;
                         filtered.Add(name);
+                        progressBar1.Visible = true;
+                        progressBar1.Minimum = 0;
+                        progressBar1.Maximum =filtered.Count;
+                        progressBar1.Value = 1;
+                        progressBar1.Step = 1;
                     }
                 }
 
                 // after we finished filtering the files we will add them to the ListView
+                
                 foreach (var film in List)
                 {
+                    
                     var f = new FileInfo(film);
                     var s1 = f.Length;
                     var s2 = (double)s1 / 1024;
@@ -136,19 +150,20 @@ namespace Disk_Organizer
                         size = " GB";
                         s2 = (double)s1 / (1024 * 1024 * 1024);
                     }
-                    Add("", Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
+                    var co = i++;
+                    Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
                     
                 }
-                
+                //progressBar1.Value = 0;
                 listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
-                listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+                //listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
-                if (List.Count > 1 || List.Count == 0)
-                    Count.Text = List.Count + @" Items in List";
-                else Count.Text = List.Count + @" Item in List";
+                listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
+                Counter();
             }
             else MessageBox.Show(@"No such Folder");
 
@@ -171,9 +186,7 @@ namespace Disk_Organizer
             {
                 checkBox1.Checked = false;
                 Query();
-                if (List.Count > 1 || List.Count == 0)
-                    Count.Text = List.Count + @" Items in List";
-                else Count.Text = List.Count + @" Item in List";
+                Counter();
             }
         }
 
@@ -183,9 +196,7 @@ namespace Disk_Organizer
         {
             checkBox1.Checked = false;
             Query();
-            if (List.Count > 1 || List.Count == 0)
-                Count.Text = List.Count + @" Items in List";
-            else Count.Text = List.Count + @" Item in List";
+            Counter();
         }
 
 
@@ -300,10 +311,13 @@ namespace Disk_Organizer
             {
                 checkBox1.Checked = false;
                 Query();
-                if (List.Count > 1 || List.Count == 0)
-                    Count.Text = List.Count + @" Items in List";
-                else Count.Text = List.Count + @" Item in List";
+                Counter();
             }
+        }
+
+        private void DiskOrganizer_Shown(object sender, EventArgs e)
+        {
+
         }
     }
 }
