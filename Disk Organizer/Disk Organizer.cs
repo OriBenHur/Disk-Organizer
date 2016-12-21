@@ -52,7 +52,7 @@ namespace Disk_Organizer
             listView1.Columns.Add("Path");
             listView1.Columns.Add("File Size");
             listView1.CheckBoxes = true;
-            Filter_toolTip.SetToolTip(Filter, "For multi filter separate string with commas");
+            Filter_toolTip.SetToolTip(Filter, "For multi filter separate the search string with commas");
         }
 
         // try to delete the checked filse 
