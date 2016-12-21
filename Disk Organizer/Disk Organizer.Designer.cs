@@ -39,7 +39,7 @@
             this.Filter_label = new System.Windows.Forms.Label();
             this.Filter_toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.Folder_Err = new System.Windows.Forms.ErrorProvider(this.components);
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.Select_ALL = new System.Windows.Forms.CheckBox();
             this.Instant_Match_checkBox = new System.Windows.Forms.CheckBox();
             this.Filter_button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -100,7 +100,7 @@
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
-            this.Filter.TextChanged += new System.EventHandler(this.Filter_TextChanged);
+            //this.Filter.TextChanged += new System.EventHandler(this.Filter_TextChanged);
             // 
             // Set_refrash_btn
             // 
@@ -134,26 +134,26 @@
             // 
             this.Folder_Err.ContainerControl = this;
             // 
-            // checkBox1
+            // Select_ALL
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(18, 105);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(15, 14);
-            this.checkBox1.TabIndex = 8;
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            this.Select_ALL.AutoSize = true;
+            this.Select_ALL.Location = new System.Drawing.Point(18, 105);
+            this.Select_ALL.Name = "Select_ALL";
+            this.Select_ALL.Size = new System.Drawing.Size(15, 14);
+            this.Select_ALL.TabIndex = 8;
+            this.Select_ALL.UseVisualStyleBackColor = true;
+            this.Select_ALL.CheckedChanged += new System.EventHandler(this.Select_ALL_CheckedChanged);
             // 
             // Instant_Match_checkBox
             // 
             this.Instant_Match_checkBox.AutoSize = true;
+            this.Instant_Match_checkBox.Enabled = false;
             this.Instant_Match_checkBox.Location = new System.Drawing.Point(325, 60);
             this.Instant_Match_checkBox.Name = "Instant_Match_checkBox";
             this.Instant_Match_checkBox.Size = new System.Drawing.Size(91, 17);
             this.Instant_Match_checkBox.TabIndex = 9;
             this.Instant_Match_checkBox.Text = "Instant Match";
             this.Instant_Match_checkBox.UseVisualStyleBackColor = true;
-            this.Instant_Match_checkBox.CheckedChanged += new System.EventHandler(this.Instant_Match_checkBox_CheckedChanged);
             // 
             // Filter_button
             // 
@@ -199,7 +199,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Filter_button);
             this.Controls.Add(this.Instant_Match_checkBox);
-            this.Controls.Add(this.checkBox1);
+            this.Controls.Add(this.Select_ALL);
             this.Controls.Add(this.Filter_label);
             this.Controls.Add(this.Folder_label);
             this.Controls.Add(this.Set_refrash_btn);
@@ -211,7 +211,7 @@
             this.Name = "DiskOrganizer";
             this.Text = "Disk_Organizer";
             this.Load += new System.EventHandler(this.Disk_Organizer_Load);
-            this.Shown += new System.EventHandler(this.DiskOrganizer_Shown);
+            //this.Shown += new System.EventHandler(this.DiskOrganizer_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -230,7 +230,7 @@
         private System.Windows.Forms.Label Filter_label;
         private System.Windows.Forms.ToolTip Filter_toolTip;
         private System.Windows.Forms.ErrorProvider Folder_Err;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox Select_ALL;
         private System.Windows.Forms.Button Filter_button;
         private System.Windows.Forms.CheckBox Instant_Match_checkBox;
         private System.Windows.Forms.Label Count;

@@ -33,9 +33,9 @@ namespace Disk_Organizer
         }
 
         // add method used to add new item to the listView
-        private void Add(string box,string index, string path, string name, string size)
+        private void Add(string box, string index, string path, string name, string size)
         {
-            string[] row = { box,index , path, name, size };
+            string[] row = { box, index, path, name, size };
             var item = new ListViewItem(row);
             listView1.Items.Add(item);
             progressBar1.PerformStep();
@@ -75,7 +75,7 @@ namespace Disk_Organizer
                     MessageBox.Show(@"Failed to delete " + item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
                 }
             }
-            checkBox1.Checked = false;
+            Select_ALL.Checked = false;
             //Filter.Text = "";
             Query();
             Counter();
@@ -125,17 +125,17 @@ namespace Disk_Organizer
                         filtered.Add(name);
                         progressBar1.Visible = true;
                         progressBar1.Minimum = 0;
-                        progressBar1.Maximum =filtered.Count;
+                        progressBar1.Maximum = filtered.Count;
                         progressBar1.Value = 1;
                         progressBar1.Step = 1;
                     }
                 }
 
                 // after we finished filtering the files we will add them to the ListView
-                
+
                 foreach (var film in List)
                 {
-                    
+
                     var f = new FileInfo(film);
                     var s1 = f.Length;
                     var s2 = (double)s1 / 1024;
@@ -152,7 +152,7 @@ namespace Disk_Organizer
                     }
                     var co = i++;
                     Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
-                    
+
                 }
                 //progressBar1.Value = 0;
                 listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -171,30 +171,30 @@ namespace Disk_Organizer
 
         // Clear the error provider when Filter text is change
         // if the path is not empty run new query to refrash the results
-        private void Filter_TextChanged(object sender, EventArgs e)
-        {
-            if (!Instant_Match_checkBox.Checked) return;
-            Folder_Err.Clear();
-            if (Folder_Path.Text == "")
-            {
-                Filter.Text = "";
-                checkBox1.Checked = false;
-                Folder_Err.SetError(Filter, "You must selcet folder first");
+        //private void Filter_TextChanged(object sender, EventArgs e)
+        //{
+        //    //if (!Instant_Match_checkBox.Checked) return;
+        //    Folder_Err.Clear();
+        //    if (Folder_Path.Text == "")
+        //    {
+        //        Filter.Text = "";
+        //        Select_ALL.Checked = false;
+        //        Folder_Err.SetError(Filter, "You must selcet folder first");
 
-            }
-            else
-            {
-                checkBox1.Checked = false;
-                Query();
-                Counter();
-            }
-        }
+        //    }
+        //    //else
+        //    //{
+        //    //    Select_ALL.Checked = false;
+        //    //    Query();
+        //    //    Counter();
+        //    //}
+        //}
 
         // Clear the error provider when refrash is clicked 
         // also run new query to refrash the results
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
-            checkBox1.Checked = false;
+            Select_ALL.Checked = false;
             Query();
             Counter();
         }
@@ -211,9 +211,9 @@ namespace Disk_Organizer
             Folder_Err.Clear();
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void Select_ALL_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox1.Checked)
+            if (Select_ALL.Checked)
             {
                 for (var i = 0; i < listView1.Items.Count; i++)
                 {
@@ -282,20 +282,20 @@ namespace Disk_Organizer
             }
         }
 
-        private void Instant_Match_checkBox_CheckedChanged(object sender, EventArgs e)
-        {
-            if (!Instant_Match_checkBox.Checked)
-            {
-                Instant_Match_checkBox.Location = new Point(325, 60);
-                Filter_button.Visible = true;
-            }
-            else
-            {
-                Filter_button.Visible = false;
-                Instant_Match_checkBox.Location = new Point(247, 60);
-            }
+        //private void Instant_Match_checkBox_CheckedChanged(object sender, EventArgs e)
+        //{
+        //    if (!Instant_Match_checkBox.Checked)
+        //    {
+        //        Instant_Match_checkBox.Location = new Point(325, 60);
+        //        Filter_button.Visible = true;
+        //    }
+        //    else
+        //    {
+        //        Filter_button.Visible = false;
+        //        Instant_Match_checkBox.Location = new Point(247, 60);
+        //    }
 
-        }
+        //}
 
         private void Filter_button_Click(object sender, EventArgs e)
         {
@@ -303,21 +303,16 @@ namespace Disk_Organizer
             if (Folder_Path.Text == "")
             {
                 Filter.Text = "";
-                checkBox1.Checked = false;
+                Select_ALL.Checked = false;
                 Folder_Err.SetError(Filter, "You must selcet folder first");
 
             }
             else
             {
-                checkBox1.Checked = false;
+                Select_ALL.Checked = false;
                 Query();
                 Counter();
             }
-        }
-
-        private void DiskOrganizer_Shown(object sender, EventArgs e)
-        {
-
         }
     }
 }
