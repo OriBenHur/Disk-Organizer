@@ -52,7 +52,7 @@ namespace Disk_Organizer
             listView1.Columns.Add("Path");
             listView1.Columns.Add("File Size");
             listView1.CheckBoxes = true;
-            Filter_toolTip.SetToolTip(Filter, "For multi filter separate the strings with whitespace");
+            Filter_toolTip.SetToolTip(Filter, "For multi filter separate string with commas");
         }
 
         // try to delete the checked filse 
@@ -313,6 +313,23 @@ namespace Disk_Organizer
                 Query();
                 Counter();
             }
+        }
+
+        private void Folder_Path_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                Set_refrash_btn_Click(sender, e);
+        }
+
+        private void Filter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                Filter_button_Click(sender, e);
+        }
+
+        private void Folder_Path_DoubleClick(object sender, EventArgs e)
+        {
+            Browse_Folder_Click(sender, e);
         }
     }
 }

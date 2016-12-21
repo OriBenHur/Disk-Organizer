@@ -42,7 +42,6 @@
             this.Select_ALL = new System.Windows.Forms.CheckBox();
             this.Instant_Match_checkBox = new System.Windows.Forms.CheckBox();
             this.Filter_button = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.Count = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -67,6 +66,8 @@
             this.Folder_Path.TabIndex = 1;
             this.Folder_Path.Click += new System.EventHandler(this.Folder_Path_Click);
             this.Folder_Path.TextChanged += new System.EventHandler(this.Folder_Path_TextChanged);
+            this.Folder_Path.DoubleClick += new System.EventHandler(this.Folder_Path_DoubleClick);
+            this.Folder_Path.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Folder_Path_KeyDown);
             // 
             // listView1
             // 
@@ -77,7 +78,7 @@
             this.listView1.CheckBoxes = true;
             this.listView1.Location = new System.Drawing.Point(12, 98);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(774, 280);
+            this.listView1.Size = new System.Drawing.Size(774, 341);
             this.listView1.TabIndex = 2;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
@@ -86,7 +87,7 @@
             // Delete_btn
             // 
             this.Delete_btn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.Delete_btn.Location = new System.Drawing.Point(683, 384);
+            this.Delete_btn.Location = new System.Drawing.Point(683, 445);
             this.Delete_btn.Name = "Delete_btn";
             this.Delete_btn.Size = new System.Drawing.Size(103, 23);
             this.Delete_btn.TabIndex = 3;
@@ -100,7 +101,7 @@
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
-            //this.Filter.TextChanged += new System.EventHandler(this.Filter_TextChanged);
+            this.Filter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Filter_KeyDown);
             // 
             // Set_refrash_btn
             // 
@@ -165,26 +166,22 @@
             this.Filter_button.UseVisualStyleBackColor = true;
             this.Filter_button.Click += new System.EventHandler(this.Filter_button_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "label1";
-            // 
             // Count
             // 
+            this.Count.AutoEllipsis = true;
             this.Count.AutoSize = true;
-            this.Count.Location = new System.Drawing.Point(12, 394);
+            this.Count.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Count.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.Count.Location = new System.Drawing.Point(0, 470);
             this.Count.Name = "Count";
             this.Count.Size = new System.Drawing.Size(0, 13);
             this.Count.TabIndex = 12;
             // 
             // progressBar1
             // 
-            this.progressBar1.Location = new System.Drawing.Point(12, 383);
+            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.progressBar1.Location = new System.Drawing.Point(12, 445);
             this.progressBar1.Name = "progressBar1";
             this.progressBar1.Size = new System.Drawing.Size(665, 23);
             this.progressBar1.TabIndex = 13;
@@ -193,10 +190,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(798, 419);
+            this.ClientSize = new System.Drawing.Size(798, 483);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.Count);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.Filter_button);
             this.Controls.Add(this.Instant_Match_checkBox);
             this.Controls.Add(this.Select_ALL);
@@ -211,7 +207,6 @@
             this.Name = "DiskOrganizer";
             this.Text = "Disk_Organizer";
             this.Load += new System.EventHandler(this.Disk_Organizer_Load);
-            //this.Shown += new System.EventHandler(this.DiskOrganizer_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.Folder_Err)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -234,7 +229,6 @@
         private System.Windows.Forms.Button Filter_button;
         private System.Windows.Forms.CheckBox Instant_Match_checkBox;
         private System.Windows.Forms.Label Count;
-        private System.Windows.Forms.Label label1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.ProgressBar progressBar1;
     }
