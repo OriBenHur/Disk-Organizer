@@ -152,10 +152,16 @@ namespace Disk_Organizer
                         }
                     }
 
-                    catch
+                    catch(Exception e)
                     {
-                        Folder_Err.SetError(Filter, "this wildcard can't be used,\ntry putting '.' (dot) in front of this wildcard");
-                        break;
+                        var pattern = "[?*]";
+                        Match match = Regex.Match(e.Message, pattern);
+                        var msg = match.Value;
+                        if (e.Message.Contains("Quantifier {x,y} following nothing"))
+                        {
+                            Folder_Err.SetError(Filter, "'"+msg+"'" + " Cna't be followed by nothing Try putting '.' (dot) in front of it\n aka: ."+msg);
+                            break;
+                        }
                     }
                 }
 
