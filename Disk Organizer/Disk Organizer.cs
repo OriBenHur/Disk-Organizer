@@ -190,7 +190,7 @@ namespace Disk_Organizer
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
-                //Counter();
+                Counter();
             }
 
             else MessageBox.Show(@"No such Folder");
@@ -230,7 +230,7 @@ namespace Disk_Organizer
         {
             Check_All.Checked = false;
             Query();
-            Counter();
+            //Counter();
         }
 
 
@@ -392,7 +392,7 @@ namespace Disk_Organizer
             {
                 Check_All.Checked = false;
                 Query();
-                Counter();
+                //Counter();
             }
         }
 
