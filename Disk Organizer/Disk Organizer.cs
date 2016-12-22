@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Disk_Organizer
 {
@@ -25,20 +26,20 @@ namespace Disk_Organizer
             Folder_Path.Text = fs.FileName;
         }
 
-        public void Counter()
+        private void Counter()
         {
-            if (List.Count > 1 || List.Count == 0)
-                Count.Text = List.Count + @" Items in the List";
+            if (List.Count > 1 || List.Count == 0) Count.Text = List.Count + @" Items in the List";
             else Count.Text = List.Count + @" Item in the List";
         }
 
         // add method used to add new item to the listView
         private void Add(string box, string index, string path, string name, string size)
         {
+            progressBar1.PerformStep();
             string[] row = { box, index, path, name, size };
             var item = new ListViewItem(row);
             listView1.Items.Add(item);
-            progressBar1.PerformStep();
+
         }
 
         // initial form load configuration 
@@ -65,8 +66,8 @@ namespace Disk_Organizer
                 try
                 {
 
-                    //item.SubItems[2].Text = Folder Path
-                    //item.SubItems[3].Text = File Name
+                    //item.SubItems[3].Text = Folder Path
+                    //item.SubItems[2].Text = File Name
                     File.Delete(item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
 
                 }
@@ -75,7 +76,7 @@ namespace Disk_Organizer
                     MessageBox.Show(@"Failed to delete " + item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
                 }
             }
-            Select_ALL.Checked = false;
+            Check_All.Checked = false;
             //Filter.Text = "";
             Query();
             Counter();
@@ -95,17 +96,26 @@ namespace Disk_Organizer
         {
             Folder_Err.Clear();
             listView1.Items.Clear();
+            //if (Instant_Match_checkBox.Checked)
+            //{
+            //    Instant_Match_checkBox.Location = new Point(247, 60);
+            //}
             var filtered = new List<string>();
             List = filtered;
             // helper List that will be used in leter stage
 
             if (Directory.Exists(Folder_Path.Text))
             {
+
                 // allfiles holds all the files in the given path
-                var allfiles = GetFileList("*.*", Folder_Path.Text);
+                var allfiles = GetFiles(Folder_Path.Text, "*.*");
 
                 // searchstrings splite the string given in the Filter Text Field
-                var searchstrings = Filter.Text.Split(' ');
+
+                //var searchstrings = Filter.Text.Split(' ');
+                var filterStr = Filter.Text;
+                var searchstrings = Regex.Split(filterStr, @",");
+                //var searchstrings = filterStr;
 
                 // loop over the allfiles array
                 //and filtering only the needed files into Filtered List
@@ -115,25 +125,32 @@ namespace Disk_Organizer
                     var extension = Path.GetExtension(name);
                     if (extension == null) continue;
                     var ext = extension.ToLower();
-                    var fileName = Path.GetFileName(name);
-                    if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+                    //var fileName = Path.GetFileName(name);
+                    //if (fileName == null) throw new ArgumentNullException(nameof(fileName));
                     foreach (var arg in searchstrings)
                     {
-                        if (!ext.Equals(".mp4") && !ext.Equals(".avi") && !ext.Equals(".mkv")) continue;
-                        if (!Path.GetFileName(name.ToLower()).Contains(arg.ToLower())) continue;
-                        if (filtered.Contains(name)) continue;
-                        filtered.Add(name);
-                        progressBar1.Visible = true;
-                        progressBar1.Minimum = 0;
-                        progressBar1.Maximum = filtered.Count;
-                        progressBar1.Value = 1;
-                        progressBar1.Step = 1;
+                        var filter = arg.Trim();
+                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                        {
+                            if (Path.GetFileName(name.ToLower()).Contains(filter))
+                            {
+                                if (!List.Contains(name) && !List.Contains(name.ToLower()))
+                                {
+                                    filtered.Add(name);
+                                    progressBar1.Visible = true;
+                                    progressBar1.Minimum = 0;
+                                    progressBar1.Maximum = filtered.Count;
+                                    progressBar1.Value = 0;
+                                    progressBar1.Step = 1;
+                                }
+                            }
+                        }
                     }
                 }
 
                 // after we finished filtering the files we will add them to the ListView
 
-                foreach (var film in List)
+                foreach (var film in filtered)
                 {
 
                     var f = new FileInfo(film);
@@ -151,13 +168,12 @@ namespace Disk_Organizer
                         s2 = (double)s1 / (1024 * 1024 * 1024);
                     }
                     var co = i++;
-                    Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film), s2.ToString("0.00") + size);
+                    Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
+                        s2.ToString("0.00") + size);
 
                 }
-                //progressBar1.Value = 0;
                 listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
-                //listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
@@ -165,6 +181,7 @@ namespace Disk_Organizer
                 listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
                 Counter();
             }
+
             else MessageBox.Show(@"No such Folder");
 
         }
@@ -173,28 +190,34 @@ namespace Disk_Organizer
         // if the path is not empty run new query to refrash the results
         //private void Filter_TextChanged(object sender, EventArgs e)
         //{
-        //    //if (!Instant_Match_checkBox.Checked) return;
-        //    Folder_Err.Clear();
-        //    if (Folder_Path.Text == "")
+        //    if (Instant_Match_checkBox.Checked)
         //    {
-        //        Filter.Text = "";
-        //        Select_ALL.Checked = false;
-        //        Folder_Err.SetError(Filter, "You must selcet folder first");
+        //        Folder_Err.Clear();
+        //        if (Folder_Path.Text == "")
+        //        {
+        //            Filter.Text = "";
+        //            Check_All.Checked = false;
+        //            Instant_Match_checkBox.Location = new Point(260, 60);
+        //            Folder_Err.SetError(Filter, "You must selcet folder first");
+        //            //Thread.Sleep(2000);
+        //            //Folder_Err.Clear();
 
+        //        }
+        //        else
+        //        {
+        //            Check_All.Checked = false;
+        //            Query();
+        //            Counter();
+        //        }
         //    }
-        //    //else
-        //    //{
-        //    //    Select_ALL.Checked = false;
-        //    //    Query();
-        //    //    Counter();
-        //    //}
         //}
+
 
         // Clear the error provider when refrash is clicked 
         // also run new query to refrash the results
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
-            Select_ALL.Checked = false;
+            Check_All.Checked = false;
             Query();
             Counter();
         }
@@ -204,16 +227,24 @@ namespace Disk_Organizer
         private void Folder_Path_TextChanged(object sender, EventArgs e)
         {
             Folder_Err.Clear();
+            //if (Instant_Match_checkBox.Checked)
+            //{
+            //    Instant_Match_checkBox.Location = new Point(247, 60);
+            //}
         }
         // Clear the error provider when folder path btn is clicked
         private void Folder_Path_Click(object sender, EventArgs e)
         {
             Folder_Err.Clear();
+            if (Instant_Match_checkBox.Checked)
+            {
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
         }
 
-        private void Select_ALL_CheckedChanged(object sender, EventArgs e)
+        private void Check_All_CheckedChanged(object sender, EventArgs e)
         {
-            if (Select_ALL.Checked)
+            if (Check_All.Checked)
             {
                 for (var i = 0; i < listView1.Items.Count; i++)
                 {
@@ -235,7 +266,7 @@ namespace Disk_Organizer
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
         }
 
-        //private void listView1_ColumnClick(object sender,
+        //public void listView1_ColumnClick(object sender,
         //                           ColumnClickEventArgs e)
         //{
         //    // Determine whether the column is the same as the last column clicked.
@@ -253,66 +284,114 @@ namespace Disk_Organizer
         //    }
 
         //    // Call the sort method to manually sort.
-        //    //listView1.Sort();
+        //    listView1.Sort();
 
         //    // Set the ListViewItemSorter property to a new ListViewItemComparer object.
         //    listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
         //                                                      listView1.Sorting);
         //}
-        //}
 
-        public static IEnumerable<string> GetFileList(string fileSearchPattern, string rootFolderPath)
+
+        private static IEnumerable<string> GetFiles(string path, string pattern)
         {
-            Queue<string> pending = new Queue<string>();
-            pending.Enqueue(rootFolderPath);
-            string[] tmp;
-            while (pending.Count > 0)
+            var files = new List<string>();
+
+            try
             {
-                rootFolderPath = pending.Dequeue();
-                tmp = Directory.GetFiles(rootFolderPath, fileSearchPattern);
-                for (var i = 0; i < tmp.Length; i++)
-                {
-                    yield return tmp[i];
-                }
-                tmp = Directory.GetDirectories(rootFolderPath);
-                for (var i = 0; i < tmp.Length; i++)
-                {
-                    pending.Enqueue(tmp[i]);
-                }
+                files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
+                foreach (var directory in Directory.GetDirectories(path))
+                    files.AddRange(GetFiles(directory, pattern));
             }
+            catch
+            {
+                Console.WriteLine(@"Opps!");
+            }
+
+            return files;
         }
-
-        //private void Instant_Match_checkBox_CheckedChanged(object sender, EventArgs e)
+        //public static IEnumerable<string> GetFileList(string fileSearchPattern, string rootFolderPath)
         //{
-        //    if (!Instant_Match_checkBox.Checked)
+        //    var list = new List<string>();
+        //    try
         //    {
-        //        Instant_Match_checkBox.Location = new Point(325, 60);
-        //        Filter_button.Visible = true;
-        //    }
-        //    else
-        //    {
-        //        Filter_button.Visible = false;
-        //        Instant_Match_checkBox.Location = new Point(247, 60);
-        //    }
+        //        Queue<string> pending = new Queue<string>();
+        //        pending.Enqueue(rootFolderPath);
 
+        //        while (pending.Count > 0)
+        //        {
+
+        //            rootFolderPath = pending.Dequeue();
+        //            var tmp = Directory.GetFiles(rootFolderPath, fileSearchPattern);
+
+
+        //            for (var i = 0; i < tmp.Length; i++)
+        //            {
+        //                list.Add(tmp[i]);
+        //            }
+        //            tmp = Directory.GetDirectories(rootFolderPath);
+        //            for (var i = 0; i < tmp.Length; i++)
+        //            {
+        //                pending.Enqueue(tmp[i]);
+        //            }
+        //        }
+
+        //        return list;
+        //    }
+        //    catch
+        //    {
+
+        //        Console.WriteLine(@"");
+        //    }
+        //    return list;
         //}
+
+
+        private void Instant_Match_checkBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!Instant_Match_checkBox.Checked)
+            {
+                Folder_Err.Clear();
+                Instant_Match_checkBox.Location = new Point(325, 60);
+                Filter_button.Visible = true;
+            }
+            else
+            {
+                Folder_Err.Clear();
+                Filter_button.Visible = false;
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
+
+        }
 
         private void Filter_button_Click(object sender, EventArgs e)
         {
             Folder_Err.Clear();
+            if (Instant_Match_checkBox.Checked)
+            {
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
             if (Folder_Path.Text == "")
             {
                 Filter.Text = "";
-                Select_ALL.Checked = false;
+                Check_All.Checked = false;
                 Folder_Err.SetError(Filter, "You must selcet folder first");
 
             }
             else
             {
-                Select_ALL.Checked = false;
+                Check_All.Checked = false;
                 Query();
                 Counter();
             }
+        }
+
+        private void Filter_DoubleClick(object sender, EventArgs e)
+        {
+            Folder_Err.Clear();
+            //if (Instant_Match_checkBox.Checked)
+            //{
+            //    Instant_Match_checkBox.Location = new Point(247, 60);
+            //}
         }
 
         private void Folder_Path_KeyDown(object sender, KeyEventArgs e)
