@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
 
+
 namespace Disk_Organizer
 {
     public partial class DiskOrganizer : Form
@@ -53,7 +54,7 @@ namespace Disk_Organizer
             listView1.Columns.Add("Path");
             listView1.Columns.Add("File Size");
             listView1.CheckBoxes = true;
-            Filter_toolTip.SetToolTip(Filter, "For multi filter separate the search string with commas");
+            Filter_toolTip.SetToolTip(Filter, "For multi filter separate the search string with commas\nSupport Wildcard");
         }
 
         // try to delete the checked filse 
@@ -122,29 +123,39 @@ namespace Disk_Organizer
                 var i = 1;
                 foreach (var name in allfiles)
                 {
-                    var extension = Path.GetExtension(name);
-                    if (extension == null) continue;
-                    var ext = extension.ToLower();
-                    //var fileName = Path.GetFileName(name);
-                    //if (fileName == null) throw new ArgumentNullException(nameof(fileName));
-                    foreach (var arg in searchstrings)
+                    try
                     {
-                        var filter = arg.Trim();
-                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                        var extension = Path.GetExtension(name);
+                        if (extension == null) continue;
+                        var ext = extension.ToLower();
+                        //var fileName = Path.GetFileName(name);
+                        //if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+                        foreach (var arg in searchstrings)
                         {
-                            if (Path.GetFileName(name.ToLower()).Contains(filter))
+                            var filter = arg.Trim();
+                            if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
                             {
-                                if (!List.Contains(name) && !List.Contains(name.ToLower()))
+                                var isValid = Regex.IsMatch(Path.GetFileName(name), filter, RegexOptions.IgnoreCase);
+                                if (isValid)
                                 {
-                                    filtered.Add(name);
-                                    progressBar1.Visible = true;
-                                    progressBar1.Minimum = 0;
-                                    progressBar1.Maximum = filtered.Count;
-                                    progressBar1.Value = 0;
-                                    progressBar1.Step = 1;
+                                    if (!List.Contains(name) && !List.Contains(name.ToLower()))
+                                    {
+                                        filtered.Add(name);
+                                        progressBar1.Visible = true;
+                                        progressBar1.Minimum = 0;
+                                        progressBar1.Maximum = filtered.Count;
+                                        progressBar1.Value = 0;
+                                        progressBar1.Step = 1;
+                                    }
                                 }
                             }
                         }
+                    }
+
+                    catch
+                    {
+                        Folder_Err.SetError(Filter, "this wildcard can't be used,\ntry putting '.' (dot) in front of this wildcard");
+                        break;
                     }
                 }
 
@@ -179,7 +190,7 @@ namespace Disk_Organizer
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
                 listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
                 listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
-                Counter();
+                //Counter();
             }
 
             else MessageBox.Show(@"No such Folder");
