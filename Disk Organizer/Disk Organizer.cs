@@ -84,14 +84,14 @@ namespace Disk_Organizer
             Counter();
         }
 
-        public List<string> List
+        public IList<string> List
         {
             get { return _filtered; }
             set { _filtered = value; }
         }
 
 
-        private List<string> _filtered = new List<string>();
+        private IList<string> _filtered = new List<string>();
         private IList<string> _allfiles = new List<string>();
 
         // Main method, search for all matching objects in a respective path 
@@ -118,18 +118,21 @@ namespace Disk_Organizer
             progressBar1.Maximum = _allfiles.Count;
             progressBar1.Value = 0;
             progressBar1.Step = 1;
-            foreach (var name in _allfiles)
+
+            if (Filter.Text != "")
             {
-                try
+                foreach (var name in _allfiles)
                 {
-                    var extension = Path.GetExtension(name);
-                    if (extension == null) continue;
-                    var ext = extension.ToLower();
-                    foreach (var arg in searchstrings)
+                    try
                     {
-                        var filter = arg.Trim();
-                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                        //var extension = Path.GetExtension(name);
+                        //if (extension == null) continue;
+                        //var ext = extension.ToLower();
+                        foreach (var arg in searchstrings)
                         {
+                            var filter = arg.Trim();
+                            //if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                            //{
                             var isValid = Regex.IsMatch(Path.GetFileName(name), filter, RegexOptions.IgnoreCase);
                             if (isValid)
                             {
@@ -138,23 +141,32 @@ namespace Disk_Organizer
                                     filtered.Add(name);
                                 }
                             }
+                            //}
+                            //else _allfiles.Remove(name);
+                            progressBar1.PerformStep();
                         }
-                        progressBar1.PerformStep();
+                    }
+
+                    catch (Exception e)
+                    {
+                        var pattern = "[?*]";
+                        Match match = Regex.Match(e.Message, pattern);
+                        var msg = match.Value;
+                        if (e.Message.Contains("Quantifier {x,y} following nothing"))
+                        {
+                            Folder_Err.SetError(Filter,
+                                "'" + msg + "'" +
+                                " Cna't be followed by nothing Try putting '.' (dot) in front of it\n aka: ." + msg);
+                            break;
+                        }
                     }
                 }
-
-                catch (Exception e)
+            }
+            else
+            {
+                foreach (var name in _allfiles)
                 {
-                    var pattern = "[?*]";
-                    Match match = Regex.Match(e.Message, pattern);
-                    var msg = match.Value;
-                    if (e.Message.Contains("Quantifier {x,y} following nothing"))
-                    {
-                        Folder_Err.SetError(Filter,
-                            "'" + msg + "'" +
-                            " Cna't be followed by nothing Try putting '.' (dot) in front of it\n aka: ." + msg);
-                        break;
-                    }
+                    filtered.Add(name);
                 }
             }
             progressBar1.Minimum = 0;
@@ -183,7 +195,6 @@ namespace Disk_Organizer
                 progressBar1.PerformStep();
                 Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
                     s2.ToString("0.00") + size);
-
             }
             listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
             listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
@@ -193,6 +204,14 @@ namespace Disk_Organizer
             listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
             listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
             Counter();
+            //var file = new FileStream("C:\\TMP\\schedule.txt", FileMode.OpenOrCreate, FileAccess.Write);
+            //var sw = new StreamWriter(file);
+            //foreach (ListViewItem listItem in listView1.Items)
+            //{
+            //    sw.WriteLine(listItem.SubItems[1].Text + ";" + listItem.SubItems[2].Text + ";" + listItem.SubItems[3].Text + ";" + listItem.SubItems[4].Text);
+            //}
+            //sw.Close();
+            //file.Close();
 
 
 
@@ -225,6 +244,21 @@ namespace Disk_Organizer
             }
         }
 
+        private IList<string> Filteredlist(IList<string> list)
+        {
+            List<string> tmp = new List<string>();
+            foreach (var name in list)
+            {
+                var extension = Path.GetExtension(name);
+                if (extension == null) continue;
+                var ext = extension.ToLower();
+                if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                {
+                    tmp.Add(name);
+                }
+            }
+            return tmp;
+        }
 
         // Clear the error provider when refrash is clicked 
         // also run new query to refrash the results
@@ -234,7 +268,8 @@ namespace Disk_Organizer
             Check_All.Checked = false;
             if (Directory.Exists(Folder_Path.Text))
             {
-                _allfiles = GetFiles(Folder_Path.Text, "*.*");
+                _allfiles.Clear();
+                _allfiles = Filteredlist(GetFiles(Folder_Path.Text, "*.*"));
                 if (_allfiles.Count > 500)
                 {
                     DialogResult dr =
@@ -323,9 +358,11 @@ namespace Disk_Organizer
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
         }
 
-        static List<string> files = new List<string>();
+
         private static IList<string> GetFiles(string path, string pattern)
         {
+            var files = new List<string>();
+
             try
             {
                 files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
@@ -453,5 +490,7 @@ namespace Disk_Organizer
             else Folder_Path.SelectAll();
 
         }
+
+
     }
 }
