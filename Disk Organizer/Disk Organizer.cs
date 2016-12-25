@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
@@ -31,16 +32,15 @@ namespace Disk_Organizer
         {
             if (List.Count > 1 || List.Count == 0) Count.Text = List.Count + @" Items in the List";
             else Count.Text = List.Count + @" Item in the List";
+            progressBar1.Value = 0;
         }
 
         // add method used to add new item to the listView
         private void Add(string box, string index, string path, string name, string size)
         {
-            progressBar1.PerformStep();
             string[] row = { box, index, path, name, size };
             var item = new ListViewItem(row);
             listView1.Items.Add(item);
-
         }
 
         // initial form load configuration 
@@ -70,6 +70,7 @@ namespace Disk_Organizer
                     //item.SubItems[3].Text = Folder Path
                     //item.SubItems[2].Text = File Name
                     File.Delete(item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
+                    _allfiles.Remove(item.SubItems[3].Text + @"\" + item.SubItems[2].Text);
 
                 }
                 catch
@@ -89,7 +90,9 @@ namespace Disk_Organizer
             set { _filtered = value; }
         }
 
+
         private List<string> _filtered = new List<string>();
+        private IList<string> _allfiles = new List<string>();
 
         // Main method, search for all matching objects in a respective path 
         // if the path is not empty or not invalid run a query matching the filters configured
@@ -97,146 +100,179 @@ namespace Disk_Organizer
         {
             Folder_Err.Clear();
             listView1.Items.Clear();
-            //if (Instant_Match_checkBox.Checked)
-            //{
-            //    Instant_Match_checkBox.Location = new Point(247, 60);
-            //}
+            if (Instant_Match_checkBox.Checked)
+            {
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
             var filtered = new List<string>();
             List = filtered;
             // helper List that will be used in leter stage
+            var filterStr = Filter.Text;
+            var searchstrings = Regex.Split(filterStr, @",");
 
-            if (Directory.Exists(Folder_Path.Text))
+            // loop over the allfiles array
+            //and filtering only the needed files into Filtered List
+            var i = 1;
+            progressBar1.Visible = true;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = _allfiles.Count;
+            progressBar1.Value = 0;
+            progressBar1.Step = 1;
+            foreach (var name in _allfiles)
             {
-
-                // allfiles holds all the files in the given path
-                var allfiles = GetFiles(Folder_Path.Text, "*.*");
-
-                // searchstrings splite the string given in the Filter Text Field
-
-                //var searchstrings = Filter.Text.Split(' ');
-                var filterStr = Filter.Text;
-                var searchstrings = Regex.Split(filterStr, @",");
-                //var searchstrings = filterStr;
-
-                // loop over the allfiles array
-                //and filtering only the needed files into Filtered List
-                var i = 1;
-                foreach (var name in allfiles)
+                try
                 {
-                    try
+                    var extension = Path.GetExtension(name);
+                    if (extension == null) continue;
+                    var ext = extension.ToLower();
+                    foreach (var arg in searchstrings)
                     {
-                        var extension = Path.GetExtension(name);
-                        if (extension == null) continue;
-                        var ext = extension.ToLower();
-                        //var fileName = Path.GetFileName(name);
-                        //if (fileName == null) throw new ArgumentNullException(nameof(fileName));
-                        foreach (var arg in searchstrings)
+                        var filter = arg.Trim();
+                        if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
                         {
-                            var filter = arg.Trim();
-                            if (ext.Equals(".mp4") || ext.Equals(".avi") || ext.Equals(".mkv"))
+                            var isValid = Regex.IsMatch(Path.GetFileName(name), filter, RegexOptions.IgnoreCase);
+                            if (isValid)
                             {
-                                var isValid = Regex.IsMatch(Path.GetFileName(name), filter, RegexOptions.IgnoreCase);
-                                if (isValid)
+                                if (!List.Contains(name) && !List.Contains(name.ToLower()))
                                 {
-                                    if (!List.Contains(name) && !List.Contains(name.ToLower()))
-                                    {
-                                        filtered.Add(name);
-                                        progressBar1.Visible = true;
-                                        progressBar1.Minimum = 0;
-                                        progressBar1.Maximum = filtered.Count;
-                                        progressBar1.Value = 0;
-                                        progressBar1.Step = 1;
-                                    }
+                                    filtered.Add(name);
                                 }
                             }
                         }
-                    }
-
-                    catch(Exception e)
-                    {
-                        var pattern = "[?*]";
-                        Match match = Regex.Match(e.Message, pattern);
-                        var msg = match.Value;
-                        if (e.Message.Contains("Quantifier {x,y} following nothing"))
-                        {
-                            Folder_Err.SetError(Filter, "'"+msg+"'" + " Cna't be followed by nothing Try putting '.' (dot) in front of it\n aka: ."+msg);
-                            break;
-                        }
+                        progressBar1.PerformStep();
                     }
                 }
 
-                // after we finished filtering the files we will add them to the ListView
-
-                foreach (var film in filtered)
+                catch (Exception e)
                 {
-
-                    var f = new FileInfo(film);
-                    var s1 = f.Length;
-                    var s2 = (double)s1 / 1024;
-                    var size = " KB";
-                    if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
+                    var pattern = "[?*]";
+                    Match match = Regex.Match(e.Message, pattern);
+                    var msg = match.Value;
+                    if (e.Message.Contains("Quantifier {x,y} following nothing"))
                     {
-                        size = " MB";
-                        s2 = (double)s1 / (1024 * 1024);
+                        Folder_Err.SetError(Filter,
+                            "'" + msg + "'" +
+                            " Cna't be followed by nothing Try putting '.' (dot) in front of it\n aka: ." + msg);
+                        break;
                     }
-                    else if (s1 > 1024 * 1024 * 1024)
-                    {
-                        size = " GB";
-                        s2 = (double)s1 / (1024 * 1024 * 1024);
-                    }
-                    var co = i++;
-                    Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
-                        s2.ToString("0.00") + size);
-
                 }
-                listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
-                listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
-                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
-                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
-                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
-                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
-                listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
-                Counter();
             }
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = filtered.Count;
+            progressBar1.Value = 0;
+            progressBar1.Step = 1;
+            // after we finished filtering the files we will add them to the ListView
+            foreach (var film in filtered)
+            {
 
-            else MessageBox.Show(@"No such Folder");
+                var f = new FileInfo(film);
+                var s1 = f.Length;
+                var s2 = (double)s1 / 1024;
+                var size = " KB";
+                if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
+                {
+                    size = " MB";
+                    s2 = (double)s1 / (1024 * 1024);
+                }
+                else if (s1 > 1024 * 1024 * 1024)
+                {
+                    size = " GB";
+                    s2 = (double)s1 / (1024 * 1024 * 1024);
+                }
+                var co = i++;
+                progressBar1.PerformStep();
+                Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
+                    s2.ToString("0.00") + size);
+
+            }
+            listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
+            listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
+            listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
+            Counter();
+
+
+
 
         }
 
         // Clear the error provider when Filter text is change
         // if the path is not empty run new query to refrash the results
-        //private void Filter_TextChanged(object sender, EventArgs e)
-        //{
-        //    if (Instant_Match_checkBox.Checked)
-        //    {
-        //        Folder_Err.Clear();
-        //        if (Folder_Path.Text == "")
-        //        {
-        //            Filter.Text = "";
-        //            Check_All.Checked = false;
-        //            Instant_Match_checkBox.Location = new Point(260, 60);
-        //            Folder_Err.SetError(Filter, "You must selcet folder first");
-        //            //Thread.Sleep(2000);
-        //            //Folder_Err.Clear();
+        private void Filter_TextChanged(object sender, EventArgs e)
+        {
+            if (Instant_Match_checkBox.Checked)
+            {
+                Folder_Err.Clear();
+                if (Folder_Path.Text == "")
+                {
+                    Filter.Text = "";
+                    Check_All.Checked = false;
+                    Instant_Match_checkBox.Location = new Point(260, 60);
+                    Folder_Err.SetError(Filter, "You must selcet folder first");
+                    //Thread.Sleep(2000);
+                    //Folder_Err.Clear();
 
-        //        }
-        //        else
-        //        {
-        //            Check_All.Checked = false;
-        //            Query();
-        //            Counter();
-        //        }
-        //    }
-        //}
+                }
+                else
+                {
+                    Check_All.Checked = false;
+                    Query();
+                    Counter();
+                }
+            }
+        }
 
 
         // Clear the error provider when refrash is clicked 
         // also run new query to refrash the results
         private void Set_refrash_btn_Click(object sender, EventArgs e)
         {
+            Count.Text = @"0 Items in the List";
             Check_All.Checked = false;
-            Query();
-            //Counter();
+            if (Directory.Exists(Folder_Path.Text))
+            {
+                _allfiles = GetFiles(Folder_Path.Text, "*.*");
+                if (_allfiles.Count > 500)
+                {
+                    DialogResult dr =
+                        MessageBox.Show(
+                            @"Do you really wanna process " + _allfiles.Count + @" Files?" + Environment.NewLine +
+                            @"Take in consider that it will take me some time to process all these files",
+                            @"Wow this will take me some time..", MessageBoxButtons.YesNo);
+                    switch (dr)
+                    {
+                        case DialogResult.Yes:
+                            Query();
+                            Filter.Enabled = true;
+                            Filter_button.Enabled = true;
+                            Instant_Match_checkBox.Enabled = true;
+                            break;
+
+                        case DialogResult.No:
+                            break;
+                    }
+                }
+
+                else
+                {
+                    Query();
+                    if (Folder_Path.Text == "") return;
+                    Filter.Enabled = true;
+                    Filter_button.Enabled = true;
+                    Instant_Match_checkBox.Enabled = true;
+                }
+                //Counter();
+            }
+            else
+            {
+                Filter.Enabled = false;
+                Filter_button.Enabled = false;
+                Instant_Match_checkBox.Enabled = false;
+                MessageBox.Show(@"No such Folder");
+            }
         }
 
 
@@ -244,10 +280,14 @@ namespace Disk_Organizer
         private void Folder_Path_TextChanged(object sender, EventArgs e)
         {
             Folder_Err.Clear();
-            //if (Instant_Match_checkBox.Checked)
-            //{
-            //    Instant_Match_checkBox.Location = new Point(247, 60);
-            //}
+            _allfiles.Clear();
+            Filter.Enabled = false;
+            Filter_button.Enabled = false;
+            Instant_Match_checkBox.Enabled = false;
+            if (Instant_Match_checkBox.Checked)
+            {
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
         }
         // Clear the error provider when folder path btn is clicked
         private void Folder_Path_Click(object sender, EventArgs e)
@@ -283,41 +323,13 @@ namespace Disk_Organizer
             e.NewWidth = listView1.Columns[e.ColumnIndex].Width;
         }
 
-        //public void listView1_ColumnClick(object sender,
-        //                           ColumnClickEventArgs e)
-        //{
-        //    // Determine whether the column is the same as the last column clicked.
-        //    if (e.Column != _sortColumn)
-        //    {
-        //        // Set the sort column to the new column.
-        //        _sortColumn = e.Column;
-        //        // Set the sort order to ascending by default.
-        //        listView1.Sorting = SortOrder.Ascending;
-        //    }
-        //    else
-        //    {
-        //        // Determine what the last sort order was and change it.
-        //        listView1.Sorting = listView1.Sorting == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
-        //    }
-
-        //    // Call the sort method to manually sort.
-        //    listView1.Sort();
-
-        //    // Set the ListViewItemSorter property to a new ListViewItemComparer object.
-        //    listView1.ListViewItemSorter = new ListViewItemComparer(e.Column,
-        //                                                      listView1.Sorting);
-        //}
-
-
-        private static IEnumerable<string> GetFiles(string path, string pattern)
+        static List<string> files = new List<string>();
+        private static IList<string> GetFiles(string path, string pattern)
         {
-            var files = new List<string>();
-
             try
             {
                 files.AddRange(Directory.GetFiles(path, pattern, SearchOption.TopDirectoryOnly));
-                foreach (var directory in Directory.GetDirectories(path))
-                    files.AddRange(GetFiles(directory, pattern));
+                foreach (var directory in Directory.GetDirectories(path)) files.AddRange(GetFiles(directory, pattern));
             }
             catch
             {
@@ -326,6 +338,8 @@ namespace Disk_Organizer
 
             return files;
         }
+
+
         //public static IEnumerable<string> GetFileList(string fileSearchPattern, string rootFolderPath)
         //{
         //    var list = new List<string>();
@@ -382,6 +396,7 @@ namespace Disk_Organizer
 
         private void Filter_button_Click(object sender, EventArgs e)
         {
+            Count.Text = @"0 Items in the List";
             Folder_Err.Clear();
             if (Instant_Match_checkBox.Checked)
             {
@@ -394,6 +409,11 @@ namespace Disk_Organizer
                 Folder_Err.SetError(Filter, "You must selcet folder first");
 
             }
+            if (_allfiles.Count == 0)
+            {
+                Check_All.Checked = false;
+                Folder_Err.SetError(Filter, "Please Click on Set\\Refresh Folder Button First");
+            }
             else
             {
                 Check_All.Checked = false;
@@ -405,10 +425,10 @@ namespace Disk_Organizer
         private void Filter_DoubleClick(object sender, EventArgs e)
         {
             Folder_Err.Clear();
-            //if (Instant_Match_checkBox.Checked)
-            //{
-            //    Instant_Match_checkBox.Location = new Point(247, 60);
-            //}
+            if (Instant_Match_checkBox.Checked)
+            {
+                Instant_Match_checkBox.Location = new Point(247, 60);
+            }
         }
 
         private void Folder_Path_KeyDown(object sender, KeyEventArgs e)
@@ -425,7 +445,13 @@ namespace Disk_Organizer
 
         private void Folder_Path_DoubleClick(object sender, EventArgs e)
         {
-            Browse_Folder_Click(sender, e);
+            if (Folder_Path.Text == "")
+            {
+                Browse_Folder_Click(sender, e);
+            }
+
+            else Folder_Path.SelectAll();
+
         }
     }
 }

@@ -97,10 +97,12 @@
             // 
             // Filter
             // 
+            this.Filter.Enabled = false;
             this.Filter.Location = new System.Drawing.Point(54, 57);
             this.Filter.Name = "Filter";
             this.Filter.Size = new System.Drawing.Size(189, 20);
             this.Filter.TabIndex = 4;
+            this.Filter.TextChanged += new System.EventHandler(this.Filter_TextChanged);
             this.Filter.DoubleClick += new System.EventHandler(this.Filter_DoubleClick);
             this.Filter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Filter_KeyDown);
             // 
@@ -156,11 +158,11 @@
             this.Instant_Match_checkBox.TabIndex = 9;
             this.Instant_Match_checkBox.Text = "Instant Match";
             this.Instant_Match_checkBox.UseVisualStyleBackColor = true;
-            this.Instant_Match_checkBox.Visible = false;
             this.Instant_Match_checkBox.CheckedChanged += new System.EventHandler(this.Instant_Match_checkBox_CheckedChanged);
             // 
             // Filter_button
             // 
+            this.Filter_button.Enabled = false;
             this.Filter_button.Location = new System.Drawing.Point(245, 56);
             this.Filter_button.Name = "Filter_button";
             this.Filter_button.Size = new System.Drawing.Size(75, 23);
