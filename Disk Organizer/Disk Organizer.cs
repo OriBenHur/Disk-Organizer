@@ -105,6 +105,7 @@ namespace Disk_Organizer
                 Instant_Match_checkBox.Location = new Point(247, 60);
             }
             var filtered = new List<string>();
+            List.Clear();
             List = filtered;
             // helper List that will be used in leter stage
             var filterStr = Filter.Text;
@@ -176,46 +177,49 @@ namespace Disk_Organizer
             // after we finished filtering the files we will add them to the ListView
             foreach (var film in filtered)
             {
-
-                var f = new FileInfo(film);
-                var s1 = f.Length;
-                var s2 = (double)s1 / 1024;
-                var size = " KB";
-                if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
+                try
                 {
-                    size = " MB";
-                    s2 = (double)s1 / (1024 * 1024);
+                    var f = new FileInfo(@"c:\file.ffff");
+                    var s1 = f.Length;
+                    var s2 = (double)s1 / 1024;
+                    var size = " KB";
+                    if (s1 > 1024 * 1024 && s1 < 1024 * 1024 * 1024)
+                    {
+                        size = " MB";
+                        s2 = (double)s1 / (1024 * 1024);
+                    }
+                    else if (s1 > 1024 * 1024 * 1024)
+                    {
+                        size = " GB";
+                        s2 = (double)s1 / (1024 * 1024 * 1024);
+                    }
+                    var co = i++;
+                    progressBar1.PerformStep();
+                    Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
+                        s2.ToString("0.00") + size);
                 }
-                else if (s1 > 1024 * 1024 * 1024)
+                catch (Exception e)
                 {
-                    size = " GB";
-                    s2 = (double)s1 / (1024 * 1024 * 1024);
+                    MessageBox.Show(e.StackTrace);
+                    return;
                 }
-                var co = i++;
-                progressBar1.PerformStep();
-                Add("", co.ToString(), Path.GetFileName(film), Path.GetDirectoryName(film),
-                    s2.ToString("0.00") + size);
             }
-            listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
-            listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
-            listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
-            listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
-            listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
-            listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
-            Counter();
-            //var file = new FileStream("C:\\TMP\\schedule.txt", FileMode.OpenOrCreate, FileAccess.Write);
-            //var sw = new StreamWriter(file);
-            //foreach (ListViewItem listItem in listView1.Items)
-            //{
-            //    sw.WriteLine(listItem.SubItems[1].Text + ";" + listItem.SubItems[2].Text + ";" + listItem.SubItems[3].Text + ";" + listItem.SubItems[4].Text);
-            //}
-            //sw.Close();
-            //file.Close();
-
-
-
-
+            try
+            {
+                listView1.AutoResizeColumn(0, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.ColumnContent);
+                listView1.AutoResizeColumn(3, ColumnHeaderAutoResizeStyle.HeaderSize);
+                listView1.AutoResizeColumn(4, ColumnHeaderAutoResizeStyle.HeaderSize);
+                Counter();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.StackTrace);
+                return;
+            }
         }
 
         // Clear the error provider when Filter text is change
