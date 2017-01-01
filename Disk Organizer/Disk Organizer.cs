@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Windows.Forms.VisualStyles;
 
 
 namespace Disk_Organizer
@@ -29,6 +30,7 @@ namespace Disk_Organizer
             listView1.Columns.Add("File Size");
             listView1.CheckBoxes = true;
             Filter_toolTip.SetToolTip(Filter, "For multi filter separate the search string with commas\nSupport Wildcard");
+            comboBox1.Text = @"Filter Only By Name";
         }
 
 
@@ -67,6 +69,7 @@ namespace Disk_Organizer
                             Filter.Enabled = true;
                             Filter_button.Enabled = true;
                             Instant_Match_checkBox.Enabled = true;
+                            comboBox1.Enabled = true;
                             break;
 
                         case DialogResult.No:
@@ -81,6 +84,7 @@ namespace Disk_Organizer
                     Filter.Enabled = true;
                     Filter_button.Enabled = true;
                     Instant_Match_checkBox.Enabled = true;
+                    comboBox1.Enabled = true;
                 }
             }
             else
@@ -88,6 +92,7 @@ namespace Disk_Organizer
                 Filter.Enabled = false;
                 Filter_button.Enabled = false;
                 Instant_Match_checkBox.Enabled = false;
+                comboBox1.Enabled = false;
                 MessageBox.Show(@"No such Folder");
             }
         }
@@ -191,9 +196,11 @@ namespace Disk_Organizer
                         foreach (var arg in searchstrings)
                         {
                             var filter = arg.Trim();
-                            var fileName = Path.GetFileName(name);
-                            var isValid = fileName != null && Regex.IsMatch(fileName, filter, RegexOptions.IgnoreCase);
-                            if (isValid && !filtered.Contains(name) && !filtered.Contains(name.ToLower())) filtered.Add(name);
+                            filter = filter.Replace(@":\", @":\\");
+                            filter = filter.Replace(@"\", @"\\");
+                            var filename = (comboBox1.Text == @"Filter Only By Name") ?  Path.GetFileName(name) : name;
+                            var isValid = filename != null && Regex.IsMatch(filename, filter, RegexOptions.IgnoreCase);
+                            if (isValid && !filtered.Contains(filename) && !filtered.Contains(filename.ToLower())) filtered.Add(name);
                             progressBar1.PerformStep();
                         }
                     }
@@ -330,6 +337,7 @@ namespace Disk_Organizer
             Filter.Enabled = false;
             Filter_button.Enabled = false;
             Instant_Match_checkBox.Enabled = false;
+            comboBox1.Enabled = false;
             if (Instant_Match_checkBox.Checked)
             {
                 Instant_Match_checkBox.Location = new Point(247, 60);
@@ -462,6 +470,11 @@ namespace Disk_Organizer
 
             else Folder_Path.SelectAll();
 
+        }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }
