@@ -110,8 +110,8 @@ namespace Disk_Organizer
         // try to delete the checked filse 
         private void Delete_btn_Click(object sender, EventArgs e)
         {
-            var Success = true;
-            var Errors = 0;
+            var success = true;
+            var errors = 0;
             DialogResult dr = MessageBox.Show(
       @"You are about to delete files from your disk" + Environment.NewLine + @"Please confirm the operation.",
       @"Deletion Comfirmation.", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -132,12 +132,12 @@ namespace Disk_Organizer
                         catch(Exception exception)
                         {
                             MessageBox.Show(exception.Message);
-                            Success = false;
-                            Errors++;
+                            success = false;
+                            errors++;
                         }
 
                     }
-                    if (Success)
+                    if (success)
                     {
                         MessageBox.Show(@"Done.");
                         Check_All.Checked = false;
@@ -146,9 +146,9 @@ namespace Disk_Organizer
 
                     else
                     {
-                        MessageBox.Show(Errors>1 ? @"Done With "+Errors+ " Errors" : @"Done With " + Errors + " Error");
+                        MessageBox.Show(errors>1 ? @"Done With "+errors+ " Errors" : @"Done With " + errors + " Error");
                         Check_All.Checked = false;
-                        Query(true, Errors);
+                        Query(true, errors);
                     }
 
             break;
