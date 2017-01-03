@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Forms.VisualStyles;
 
 
 namespace Disk_Organizer
@@ -117,7 +116,7 @@ namespace Disk_Organizer
         {
             var success = true;
             var errors = 0;
-            DialogResult dr = MessageBox.Show(
+            var dr = MessageBox.Show(
       @"You are about to delete files from your disk" + Environment.NewLine + @"Please confirm the operation.",
       @"Deletion Comfirmation.", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             switch (dr)
@@ -197,7 +196,7 @@ namespace Disk_Organizer
                         {
                             var filter = arg.Trim();
                             filter = filter.Replace(@":\", @":\\");
-                            filter = filter.Replace(@"\", @"\\");
+                            //filter = filter.Replace(@"\", @"/");
                             var filename = (comboBox1.Text == @"Filter Only By Name") ?  Path.GetFileName(name) : name;
                             var isValid = filename != null && Regex.IsMatch(filename, filter, RegexOptions.IgnoreCase);
                             if (isValid && !filtered.Contains(filename) && !filtered.Contains(filename.ToLower())) filtered.Add(name);
@@ -207,7 +206,7 @@ namespace Disk_Organizer
 
                     catch (Exception e)
                     {
-                        var pattern = "[?*]";
+                        const string pattern = "[?*]";
                         var match = Regex.Match(e.Message, pattern);
                         var msg = match.Value;
                         if (e.Message.Contains("Quantifier {x,y} following nothing"))
@@ -402,6 +401,7 @@ namespace Disk_Organizer
             {
                 Folder_Err.Clear();
                 Instant_Match_checkBox.Location = new Point(325, 60);
+                comboBox1.Location = new Point(423, 56);
                 Filter_button.Visible = true;
             }
             else
@@ -409,6 +409,8 @@ namespace Disk_Organizer
                 Folder_Err.Clear();
                 Filter_button.Visible = false;
                 Instant_Match_checkBox.Location = new Point(247, 60);
+                comboBox1.Location = new Point(345, 56);
+
             }
 
         }
